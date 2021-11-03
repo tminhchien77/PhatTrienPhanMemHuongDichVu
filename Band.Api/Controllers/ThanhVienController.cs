@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 
 namespace Band.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]")] //facebook.com/api/thanhvien
+    // https://localhost:44315/api/thanhvien/all
     [ApiController]
     public class ThanhVienController : ControllerBase
     {
@@ -31,7 +32,7 @@ namespace Band.Api.Controllers
         {
             var result = await _manageThanhVienService.GetById(idThanhVien);
             if (result == null)
-                return BadRequest("Cannot find product");
+                return BadRequest("Không thể tìm thấy thành viên");
             return Ok(result);
         }
         [HttpGet("all")]

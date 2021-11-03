@@ -27,8 +27,8 @@ namespace Band.ManageApp
         public ThanhVienViewModel thanhVien;
         private ThanhVienApiClient _thanhVienApiClient;
         public static ThanhVienUserControl _instance;
-        private List<Image> _avatarList;
-        private List<Image> _coverList;
+        private NewListOfImage _avatarList;
+        private NewListOfImage _coverList;
         private Image _avatar;
         private Image _cover;
         public event EventHandler AvatarChanged;
@@ -90,6 +90,16 @@ namespace Band.ManageApp
             imageHandler = new ImageHandler();
             _actionType = ActionType.READ;
             dsThanhVien = new List<ThanhVienViewModel>();
+            _avatarList = new NewListOfImage();
+            _coverList = new NewListOfImage();
+            _avatarList.Change += delegate (object sender, EventArgs arg)
+            {
+                if (_avatarList.Count() > 0) avatarImgBox.Image = _avatarList.First();
+            };
+            _coverList.Change += delegate (object sender, EventArgs arg)
+            {
+                if (_coverList.Count() > 0) avatarImgBox.Image = _coverList.First();
+            };
             /*images = new NewListOfImage();
             images.Change += delegate (object sender, EventArgs arg)
             {
@@ -124,8 +134,7 @@ namespace Band.ManageApp
 
         private void addMemberBtn_Click(object sender, EventArgs e)
         {
-            _avatarList = new List<Image>();
-            _coverList = new List<Image>();
+            
             avatarImgBox.Image = new Bitmap("C:\\Users\\mchie\\Desktop\\PhatTrienPhanMemHuongDichVu\\Band.ManageApp\\Resources\\user.png");
             coverImgBox.Image = new Bitmap("C:\\Users\\mchie\\Desktop\\PhatTrienPhanMemHuongDichVu\\Band.ManageApp\\Resources\\image.png");
             nameTxtBox.Text="";
@@ -280,23 +289,35 @@ namespace Band.ManageApp
         {
             var thanhVienGetAllVm = new ThanhVienGetAllViewModel();
             thanhVienGetAllVm = thanhVienCombobox.SelectedValue as ThanhVienGetAllViewModel;
-            ImagesForm imagesForm = new ImagesForm();
-            /*imagesForm.Sender(images);*/
-            if (_actionType != ActionType.CREATE)
-                imagesForm.SenderId(ImageType.AVATAR_MEM, thanhVienGetAllVm.IdThanhVien);
-            else
-                imagesForm.SenderId(ImageType.AVATAR_MEM);
-/*            imagesForm.ShowDialog();*/
-            if (imagesForm.ShowDialog() == DialogResult.OK)
+            using (var imagesForm = new ImagesForm())
             {
+                if (_actionType != ActionType.CREATE)
+                    imagesForm.SenderInfo(ImageType.AVATAR_MEM, thanhVienGetAllVm.IdThanhVien);
+                else
+                    imagesForm.SenderInfo(ImageType.AVATAR_MEM);
+                /*            imagesForm.ShowDialog();*/
+                imagesForm.ShowDialog();
                 avatar = imagesForm._images.FirstOrDefault().Anh;
                 if (_actionType == ActionType.CREATE && _avatarList != null)
                     _avatarList.Clear();
+                foreach (var x in imagesForm._images)
+                {
+                    _avatarList.Add(x.Anh);
+                }
+                /*if (imagesForm.ShowDialog() == DialogResult.OK)
+                {
+                    avatar = imagesForm._images.FirstOrDefault().Anh;
+                    if (_actionType == ActionType.CREATE && _avatarList != null)
+                        _avatarList.Clear();
                     foreach (var x in imagesForm._images)
                     {
                         _avatarList.Add(x.Anh);
                     }
-            };
+                };*/
+            }
+
+            /*imagesForm.Sender(images);*/
+            
             /*            imagesForm.Parent = this;*/
         }
 
@@ -344,6 +365,7 @@ namespace Band.ManageApp
                 thanhVien = new ThanhVienViewModel();
                 //Binding cho avatar
                 ThanhVienGetAllViewModel tmp = cb.SelectedValue as ThanhVienGetAllViewModel;
+
                 thanhVien = _thanhVienApiClient.GetById(tmp.IdThanhVien);
                 
 
@@ -355,8 +377,13 @@ namespace Band.ManageApp
                 }*/
                 var byteAvatar = imageHandler._imageConverter.ConvertFrom(thanhVien.Avatar);
                 avatar = (Image)byteAvatar;
-                var byteCover = imageHandler._imageConverter.ConvertFrom(thanhVien.Cover);
-                cover = (Image)byteCover;
+                if (thanhVien.Cover != null)
+                {
+                    var byteCover = imageHandler._imageConverter.ConvertFrom(thanhVien.Cover);
+                    cover = (Image)byteCover;
+                }
+                else cover = coverImgBox.ErrorImage;
+                
                 /*                var x1 = images.Count;
                 *//*                avatarImgBox.Image = images.First();
                 */                //Binding cho vai trò
@@ -551,9 +578,9 @@ namespace Band.ManageApp
             ImagesForm imagesForm = new ImagesForm();
             /*imagesForm.Sender(images);*/
             if (_actionType != ActionType.CREATE)
-                imagesForm.SenderId(ImageType.COVER_MEM, thanhVienGetAllVm.IdThanhVien);
+                imagesForm.SenderInfo(ImageType.COVER_MEM, thanhVienGetAllVm.IdThanhVien);
             else
-                imagesForm.SenderId(ImageType.COVER_MEM);
+                imagesForm.SenderInfo(ImageType.COVER_MEM);
             /*            imagesForm.ShowDialog();*/
             if (imagesForm.ShowDialog() == DialogResult.OK)
             {

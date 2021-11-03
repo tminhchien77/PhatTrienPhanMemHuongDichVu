@@ -1,4 +1,5 @@
 using Band.Api.Catalog.LoaiVeServices;
+using Band.Api.Catalog.ShowServices;
 using Band.Api.Catalog.ThanhVienService;
 using Band.Api.Catalog.VaiTroServices;
 using Band.Data.EF;
@@ -26,7 +27,8 @@ namespace Band.Api
         }
 
         public IConfiguration Configuration { get; }
-
+/*        readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+*/
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -35,12 +37,16 @@ namespace Band.Api
 );*/
             services.AddDbContext<BandDbContext>(
                 options => options.UseSqlServer("name=ConnectionStrings:bandDb"));
+            services.AddCors(options => options.AddDefaultPolicy(
+                builder => builder.AllowAnyOrigin())
+            );
 
             //DI
             services.AddTransient<IPublicThanhVienService, PublicThanhVienService>();
             services.AddTransient<IManageThanhVienService, ManageThanhVienService>();
             services.AddTransient<IVaiTroService, VaiTroService>();
             services.AddTransient<ILoaiVeService, LoaiVeService>();
+            services.AddTransient<IManageShowService, ManageShowService>();
             services.AddControllers();
         }
 
@@ -55,6 +61,7 @@ namespace Band.Api
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseCors();
 
             app.UseAuthorization();
 

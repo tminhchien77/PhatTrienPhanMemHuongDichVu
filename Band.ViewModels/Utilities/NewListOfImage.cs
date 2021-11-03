@@ -5,9 +5,9 @@ using System.Text;
 
 namespace Band.ViewModels.Utilities
 {
-    public class NewListOfImage : List<ImageObject>
+    public class NewListOfImage:List<Image>
     {
-        public new void Add(ImageObject img)
+        public new void Add(Image img)
         {
             base.Add(img);
             this.OnChange();
@@ -18,7 +18,7 @@ namespace Band.ViewModels.Utilities
             base[base.Count - 1] = obj;
             this.OnChange();
         }*/
-        public new void Remove(ImageObject img)
+        public new void Remove(Image img)
         {
             base.Remove(img);
             this.OnChange();
@@ -51,13 +51,6 @@ namespace Band.ViewModels.Utilities
             if (this.Change != null)
             {
                 this.Change(this, new EventArgs() { });
-            }
-        }
-        private void ConvertFrom(NewListOfByteArrayImage list)
-        {
-            foreach(var x in list)
-            {
-                
             }
         }
     }

@@ -77,8 +77,7 @@ namespace Band.ManageApp.Services
         public List<ThanhVienGetAllViewModel> GetAll()
         {
             WebClient client = new WebClient();
-/*            Uri uri = new Uri("https://localhost:44315/api/thanhvien/all/");
-*/            var response = client.DownloadString(uri+"all");
+            var response = client.DownloadString(uri+"all");
             List<ThanhVienGetAllViewModel> result = JsonConvert.DeserializeObject<List<ThanhVienGetAllViewModel>>(response);
             return result;
         }
@@ -90,13 +89,6 @@ namespace Band.ManageApp.Services
 */            client.QueryString.Add("IdThanhVien", idThanhVien.ToString());
             var response = client.DownloadString(uri+ "avatar-thanh-vien");
             List<ByteArrayImageObject> byeImageList = JsonConvert.DeserializeObject<List<ByteArrayImageObject>>(response);
-            /*var result = new List<Image>();
-            var imageHandler = new ImageHandler();
-            foreach(var x in byeImageList)
-            {
-                var tmp = imageHandler._imageConverter.ConvertFrom(x);
-                result.Add((Image)tmp);
-            }*/
             return byeImageList;
         }
 
