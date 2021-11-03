@@ -27,8 +27,8 @@ namespace Band.ManageApp
         public ThanhVienViewModel thanhVien;
         private ThanhVienApiClient _thanhVienApiClient;
         public static ThanhVienUserControl _instance;
-        private NewListOfImage _avatarList;
-        private NewListOfImage _coverList;
+        private List<Image> _avatarList;
+        private List<Image> _coverList;
         private Image _avatar;
         private Image _cover;
         public event EventHandler AvatarChanged;
@@ -90,16 +90,7 @@ namespace Band.ManageApp
             imageHandler = new ImageHandler();
             _actionType = ActionType.READ;
             dsThanhVien = new List<ThanhVienViewModel>();
-            _avatarList = new NewListOfImage();
-            _coverList = new NewListOfImage();
-            _avatarList.Change += delegate (object sender, EventArgs arg)
-            {
-                if (_avatarList.Count() > 0) avatarImgBox.Image = _avatarList.First();
-            };
-            _coverList.Change += delegate (object sender, EventArgs arg)
-            {
-                if (_coverList.Count() > 0) avatarImgBox.Image = _coverList.First();
-            };
+            
             /*images = new NewListOfImage();
             images.Change += delegate (object sender, EventArgs arg)
             {
@@ -134,7 +125,8 @@ namespace Band.ManageApp
 
         private void addMemberBtn_Click(object sender, EventArgs e)
         {
-            
+            _avatarList = new NewListOfImage();
+            _coverList = new NewListOfImage();
             avatarImgBox.Image = new Bitmap("C:\\Users\\mchie\\Desktop\\PhatTrienPhanMemHuongDichVu\\Band.ManageApp\\Resources\\user.png");
             coverImgBox.Image = new Bitmap("C:\\Users\\mchie\\Desktop\\PhatTrienPhanMemHuongDichVu\\Band.ManageApp\\Resources\\image.png");
             nameTxtBox.Text="";
@@ -581,17 +573,15 @@ namespace Band.ManageApp
                 imagesForm.SenderInfo(ImageType.COVER_MEM, thanhVienGetAllVm.IdThanhVien);
             else
                 imagesForm.SenderInfo(ImageType.COVER_MEM);
-            /*            imagesForm.ShowDialog();*/
-            if (imagesForm.ShowDialog() == DialogResult.OK)
+            imagesForm.ShowDialog();
+            cover = imagesForm._images.FirstOrDefault().Anh;
+            if (_actionType == ActionType.CREATE && _coverList != null)
+                _coverList.Clear();
+            foreach (var x in imagesForm._images)
             {
-                cover = imagesForm._images.FirstOrDefault().Anh;
-                if (_actionType == ActionType.CREATE && _coverList != null)
-                    _coverList.Clear();
-                foreach (var x in imagesForm._images)
-                {
-                    _coverList.Add(x.Anh);
-                }
-            };
+                _coverList.Add(x.Anh);
+            }
+            /*            imagesForm.ShowDialog();*/
         }
 
         private void editCoverImgBtn_MouseHover(object sender, EventArgs e)

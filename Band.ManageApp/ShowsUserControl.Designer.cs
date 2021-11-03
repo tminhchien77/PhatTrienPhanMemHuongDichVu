@@ -401,6 +401,7 @@ namespace Band.ManageApp
             this.showPictureBox.Location = new System.Drawing.Point(0, 0);
             this.showPictureBox.Name = "showPictureBox";
             this.showPictureBox.Size = new System.Drawing.Size(762, 124);
+            this.showPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.showPictureBox.TabIndex = 0;
             this.showPictureBox.TabStop = false;
             // 

@@ -37,9 +37,10 @@ namespace Band.Api
 );*/
             services.AddDbContext<BandDbContext>(
                 options => options.UseSqlServer("name=ConnectionStrings:bandDb"));
-            services.AddCors(options => options.AddDefaultPolicy(
+            /*services.AddCors(options => options.AddDefaultPolicy(
                 builder => builder.AllowAnyOrigin())
-            );
+            );*/
+
 
             //DI
             services.AddTransient<IPublicThanhVienService, PublicThanhVienService>();
@@ -57,11 +58,15 @@ namespace Band.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseCors(x => x
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            app.UseCors();
+            /*app.UseCors();*/
 
             app.UseAuthorization();
 

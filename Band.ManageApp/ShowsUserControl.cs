@@ -118,6 +118,7 @@ namespace Band.ManageApp
         }
         private void addShowBtn_Click(object sender, EventArgs e)
         {
+            _imageList = new List<Image>();
             loadDataGridView();
             nameTxtBox.Text = "";
             locationTxtBox.Text = "";
@@ -203,8 +204,17 @@ namespace Band.ManageApp
                 imagesForm.SenderInfo(ImageType.IMG_SHOW, (int)showsComboBox.SelectedValue);
             else
                 imagesForm.SenderInfo(ImageType.IMG_SHOW);
+
             imagesForm.ShowDialog();
-            if (imagesForm.ShowDialog() == DialogResult.OK)
+            image = imagesForm._images.FirstOrDefault().Anh;
+            if (_actionType == ActionType.CREATE && _imageList != null)
+                _imageList.Clear();
+            foreach (var x in imagesForm._images)
+            {
+                _imageList.Add(x.Anh);
+            }
+
+            /*if (imagesForm.ShowDialog() == DialogResult.OK)
             {
                 image = imagesForm._images.FirstOrDefault().Anh;
                 if (_actionType == ActionType.CREATE && _imageList != null)
@@ -213,7 +223,7 @@ namespace Band.ManageApp
                 {
                     _imageList.Add(x.Anh);
                 }
-            };
+            };*/
         }
     }
 }
