@@ -4,8 +4,10 @@ using Band.ViewModels.Utilities;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Text;
+using System.Windows.Forms;
 
 namespace Band.ManageApp.Services
 {
@@ -19,6 +21,16 @@ namespace Band.ManageApp.Services
             WebClient client = new WebClient();
             client.Headers[HttpRequestHeader.ContentType] = "application/json";
             var response = client.UploadString(uri + "adding-images", "POST", json);
+            if (response == "true") return true;
+            return false;
+        }
+
+        public bool Create(ShowCreateRequest request)
+        {
+            var json = JsonConvert.SerializeObject(request);
+            WebClient client = new WebClient();
+            client.Headers[HttpRequestHeader.ContentType] = "application/json";
+            var response = client.UploadString(uri, "POST", json);
             if (response == "true") return true;
             return false;
         }
@@ -46,6 +58,52 @@ namespace Band.ManageApp.Services
             var response = client.DownloadString(uri + "loai-ve");
             List<LoaiVeViewModel> result = JsonConvert.DeserializeObject<List<LoaiVeViewModel>>(response);
             return result;
+        }
+
+        public ShowViewModel GetById(int idShow)
+        {
+            WebClient client = new WebClient();
+            client.QueryString.Add("idShow", idShow.ToString());
+            var response = client.DownloadString(uri + "byid");
+            ShowViewModel result = JsonConvert.DeserializeObject<ShowViewModel>(response);
+            return result;
+        }
+
+        public bool UpdateShowInfor(ShowInfoUpdateRequest request)
+        {
+            var json = JsonConvert.SerializeObject(request);
+            WebClient client = new WebClient();
+            client.Headers[HttpRequestHeader.ContentType] = "application/json";
+            var response = client.UploadString(uri+"show-info", "PUT", json);
+            if (response == "true") return true;
+            return false;
+        }
+
+        public bool UpdateTicketInfor(TicketInfoUpdateRequest request)
+        {
+            var json = JsonConvert.SerializeObject(request);
+            WebClient client = new WebClient();
+            client.Headers[HttpRequestHeader.ContentType] = "application/json";
+            string response = "";
+            try
+            {
+                response = client.UploadString(uri + "ticket-info", "PUT", json);
+            }
+            catch (WebException e)
+            {
+                response = "true";
+            }
+            if (response == "true") return true;
+            return false;
+        }
+
+        public bool Delete(int idShow)
+        {
+            WebClient client = new WebClient();
+            client.QueryString.Add("idShow", idShow.ToString());
+            var response = client.UploadString(uri, "DELETE", "");
+            if (response == "true") return true;
+            return false;
         }
     }
 }

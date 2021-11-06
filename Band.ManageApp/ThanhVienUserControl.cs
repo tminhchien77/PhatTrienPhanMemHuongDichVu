@@ -34,8 +34,8 @@ namespace Band.ManageApp
         public event EventHandler AvatarChanged;
         public event EventHandler CoverChanged;
         public static ActionType _actionType;
-/*        public static ImageType _imageType;
-*/        public static List<ThanhVienViewModel> dsThanhVien { set; get; }
+
+        public static List<ThanhVienViewModel> dsThanhVien { set; get; }
         protected virtual void OnAvatarChanged()
         {
             if (AvatarChanged != null) AvatarChanged(this, EventArgs.Empty);
@@ -90,7 +90,7 @@ namespace Band.ManageApp
             imageHandler = new ImageHandler();
             _actionType = ActionType.READ;
             dsThanhVien = new List<ThanhVienViewModel>();
-            
+
             /*images = new NewListOfImage();
             images.Change += delegate (object sender, EventArgs arg)
             {
@@ -108,14 +108,18 @@ namespace Band.ManageApp
             loadDsThanhVien();
             /*loadDsVaiTro();*/
 /*            bindingData();
-*/            saveBtn.Visible = false;
-            editAvatarBtn.Image= SetImageOpacity(editAvatarBtn.Image, 0.2f);
+*/            /*saveBtn.Visible = false;*/
+            /*editAvatarBtn.Image= SetImageOpacity(editAvatarBtn.Image, 0.2f);
             editCoverImgBtn.Image = SetImageOpacity(editCoverImgBtn.Image, 0.2f);
-            editVaiTroBtn.Image = SetImageOpacity(editVaiTroBtn.Image, 0.2f);
+            editVaiTroBtn.Image = SetImageOpacity(editVaiTroBtn.Image, 0.2f);*/
+
             avatarImgBox.Controls.Add(editAvatarBtn);
             editAvatarBtn.Location = new Point(avatarImgBox.Width - editAvatarBtn.Width - 5, avatarImgBox.Height - editAvatarBtn.Height - 5);
-            
-            
+            editAvatarBtn.BackColor = Color.FromArgb(125, Color.White);
+
+            coverImgBox.Controls.Add(editCoverImgBtn);
+            editCoverImgBtn.Location = new Point(coverImgBox.Width - editCoverImgBtn.Width - 10, coverImgBox.Height - editCoverImgBtn.Height - 10);
+            editCoverImgBtn.BackColor = Color.FromArgb(125, Color.White);
         }
 
         private void ThanhVienUserControl_Load(object sender, EventArgs e)
@@ -140,7 +144,7 @@ namespace Band.ManageApp
             dsVaiTroLbl.Visible = false;
             
             loadDsVaiTro();
-            saveBtn.Visible = true;
+            /*saveAllBtn.Visible = true;*/
             _actionType = ActionType.CREATE;
         }
 
@@ -281,14 +285,26 @@ namespace Band.ManageApp
         {
             var thanhVienGetAllVm = new ThanhVienGetAllViewModel();
             thanhVienGetAllVm = thanhVienCombobox.SelectedValue as ThanhVienGetAllViewModel;
-            using (var imagesForm = new ImagesForm())
+
+            var imagesForm = new ImagesForm();
+            if (_actionType != ActionType.CREATE)
+                imagesForm.SenderInfo(ImageType.AVATAR_MEM, thanhVienGetAllVm.IdThanhVien);
+            else
+                imagesForm.SenderInfo(ImageType.AVATAR_MEM);
+            /*            imagesForm.ShowDialog();*/
+            imagesForm.ShowDialog();
+            avatar = imagesForm._images.FirstOrDefault().Anh;
+            if (_actionType == ActionType.CREATE && _avatarList != null)
             {
-                if (_actionType != ActionType.CREATE)
-                    imagesForm.SenderInfo(ImageType.AVATAR_MEM, thanhVienGetAllVm.IdThanhVien);
-                else
-                    imagesForm.SenderInfo(ImageType.AVATAR_MEM);
-                /*            imagesForm.ShowDialog();*/
-                imagesForm.ShowDialog();
+                _avatarList.Clear();
+                foreach (var x in imagesForm._images)
+                {
+                    _avatarList.Add(x.Anh);
+                }
+            }    
+                
+            /*if (imagesForm.ShowDialog() == DialogResult.OK)
+            {
                 avatar = imagesForm._images.FirstOrDefault().Anh;
                 if (_actionType == ActionType.CREATE && _avatarList != null)
                     _avatarList.Clear();
@@ -296,31 +312,16 @@ namespace Band.ManageApp
                 {
                     _avatarList.Add(x.Anh);
                 }
-                /*if (imagesForm.ShowDialog() == DialogResult.OK)
-                {
-                    avatar = imagesForm._images.FirstOrDefault().Anh;
-                    if (_actionType == ActionType.CREATE && _avatarList != null)
-                        _avatarList.Clear();
-                    foreach (var x in imagesForm._images)
-                    {
-                        _avatarList.Add(x.Anh);
-                    }
-                };*/
-            }
+            };*/
 
-            /*imagesForm.Sender(images);*/
+        /*imagesForm.Sender(images);*/
             
-            /*            imagesForm.Parent = this;*/
-        }
-
-        private void editAvatarBtn_MouseHover(object sender, EventArgs e)
-        {
-            editAvatarBtn.BackColor = Color.FromArgb(125, Color.Black);
-        }
+        /*            imagesForm.Parent = this;*/
+    }
 
         private void editAvatarBtn_MouseLeave(object sender, EventArgs e)
         {
-            editAvatarBtn.BackColor = Color.FromArgb(0, Color.Black);
+            editAvatarBtn.Visible = false;
         }
         private void loadDsThanhVien()
         {
@@ -545,10 +546,6 @@ namespace Band.ManageApp
             return true;*/
         }
 
-        private void thanhVienCombobox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-
-        }
 
         private void deleteBtn_Click(object sender, EventArgs e)
         {
@@ -573,25 +570,19 @@ namespace Band.ManageApp
                 imagesForm.SenderInfo(ImageType.COVER_MEM, thanhVienGetAllVm.IdThanhVien);
             else
                 imagesForm.SenderInfo(ImageType.COVER_MEM);
+
             imagesForm.ShowDialog();
             cover = imagesForm._images.FirstOrDefault().Anh;
             if (_actionType == ActionType.CREATE && _coverList != null)
-                _coverList.Clear();
-            foreach (var x in imagesForm._images)
             {
-                _coverList.Add(x.Anh);
+                _coverList.Clear();
+                foreach (var x in imagesForm._images)
+                {
+                    _coverList.Add(x.Anh);
+                }
             }
+                
             /*            imagesForm.ShowDialog();*/
-        }
-
-        private void editCoverImgBtn_MouseHover(object sender, EventArgs e)
-        {
-            editCoverImgBtn.BackColor = Color.FromArgb(125, Color.Black);
-        }
-
-        private void editCoverImgBtn_MouseLeave(object sender, EventArgs e)
-        {
-            editAvatarBtn.BackColor = Color.FromArgb(0, Color.Black);
         }
     }
 }

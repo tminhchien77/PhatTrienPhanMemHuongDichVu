@@ -10,8 +10,12 @@ namespace Band.Api.Catalog.ShowServices
     public interface IManageShowService
     {
         Task<int> Create(ShowCreateRequest request);
-        Task<List<ShowGetAllViewModel>> GetAll();
-        Task<NewListOfByteArrayImage> GetAllImgById(int idShow);
+        List<ShowGetAllViewModel> GetAll();
+        NewListOfByteArrayImage GetAllImgById(int idShow);
         Task<int> AddingImages(ImagesShowAddRequest request);
+        Task<ShowViewModel> GetById(int idShow);
+        Task<int> UpdateShowInfo(ShowInfoUpdateRequest request);
+        Task<int> UpdateTicketInfor(TicketInfoUpdateRequest request);
+        Task<int> Delete(int thanhVienId);
     }
 }

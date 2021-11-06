@@ -57,23 +57,31 @@ namespace Band.ManageApp
             _idObject = id;
             _imgType = imageType;
 
-            _thanhVienApiClient = new ThanhVienApiClient();
-            _showApiClient = new ShowApiClient();
-            if (_imgType == ImageType.AVATAR_MEM)
-                foreach(var x in _thanhVienApiClient.GetAllAvatarById(id))
+            
+            if (imageType == ImageType.IMG_SHOW)
+            {
+                _showApiClient = new ShowApiClient();
+                foreach (var x in _showApiClient.GetAllImgById(id))
                 {
                     _images.Add(new ImageObject(x));
                 }
-            else if (imageType == ImageType.COVER_MEM)
-                foreach (var x in _thanhVienApiClient.GetAllCoverById(id))
-                {
-                    _images.Add(new ImageObject(x));
-                }
-            else if(imageType == ImageType.IMG_SHOW) { }
-                /*foreach (var x in _showApiClient.GetAllImgById(id))
-                {
-                    _images.Add(new ImageObject(x));
-                }*/
+            }
+            else
+            {
+                _thanhVienApiClient = new ThanhVienApiClient();
+                if (_imgType == ImageType.AVATAR_MEM)
+                    foreach (var x in _thanhVienApiClient.GetAllAvatarById(id))
+                    {
+                        _images.Add(new ImageObject(x));
+                    }
+                else if (imageType == ImageType.COVER_MEM)
+                    foreach (var x in _thanhVienApiClient.GetAllCoverById(id))
+                    {
+                        _images.Add(new ImageObject(x));
+                    }
+            }
+            
+            
 
             /*            _images.AddRange(_thanhVienApiClient.GetAllImgeById(id));
             */
@@ -205,13 +213,14 @@ namespace Band.ManageApp
         {
             int i = 0;
             var listId = new List<int>();
+            var listimg = new List<int>();
             foreach (var p in imgsContainer.Controls.OfType<Panel>())
             {
                 if (((CheckBox)p.Controls.OfType<CheckBox>().FirstOrDefault()).Checked)
                 {
                     var img = ((PictureBox)p.Controls.OfType<PictureBox>().FirstOrDefault());
                     listId.Add(_images[i].IdAnh.Value);
-                    _images.RemoveAt(i);  
+                    listimg.Add(i); 
                 }
                 i++;
             }
@@ -221,7 +230,11 @@ namespace Band.ManageApp
                     _thanhVienApiClient = new ThanhVienApiClient();
                 _thanhVienApiClient.DeleteImages(listId);
             }
-                   
+            foreach(var x in listimg)
+            {
+                _images.RemoveAt(x);
+            }
+            
             deleteBtn.Visible = false;
             selectAllCheckBox.Visible = false;
         }

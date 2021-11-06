@@ -30,7 +30,7 @@ namespace Band.ManageApp
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ThanhVienUserControl));
-            this.panel1 = new System.Windows.Forms.Panel();
+            this.imgPnl = new System.Windows.Forms.Panel();
             this.editCoverImgBtn = new System.Windows.Forms.PictureBox();
             this.editAvatarBtn = new System.Windows.Forms.PictureBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
@@ -44,7 +44,6 @@ namespace Band.ManageApp
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.nameTxtBox = new System.Windows.Forms.TextBox();
-            this.saveBtn = new System.Windows.Forms.Button();
             this.centerInfoPnl = new System.Windows.Forms.Panel();
             this.vaiTroListBox = new System.Windows.Forms.CheckedListBox();
             this.editVaiTroBtn = new System.Windows.Forms.PictureBox();
@@ -68,7 +67,8 @@ namespace Band.ManageApp
             this.deleteBtn = new System.Windows.Forms.PictureBox();
             this.thanhVienCombobox = new System.Windows.Forms.ComboBox();
             this.infoPnl = new System.Windows.Forms.Panel();
-            this.panel1.SuspendLayout();
+            this.saveBtn = new System.Windows.Forms.Button();
+            this.imgPnl.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.editCoverImgBtn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.editAvatarBtn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -84,49 +84,45 @@ namespace Band.ManageApp
             this.infoPnl.SuspendLayout();
             this.SuspendLayout();
             // 
-            // panel1
+            // imgPnl
             // 
-            this.panel1.Controls.Add(this.editCoverImgBtn);
-            this.panel1.Controls.Add(this.editAvatarBtn);
-            this.panel1.Controls.Add(this.pictureBox1);
-            this.panel1.Controls.Add(this.avatarImgBox);
-            this.panel1.Controls.Add(this.coverImgBox);
-            this.panel1.Location = new System.Drawing.Point(4, 37);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(755, 173);
-            this.panel1.TabIndex = 0;
+            this.imgPnl.Controls.Add(this.editCoverImgBtn);
+            this.imgPnl.Controls.Add(this.editAvatarBtn);
+            this.imgPnl.Controls.Add(this.pictureBox1);
+            this.imgPnl.Controls.Add(this.avatarImgBox);
+            this.imgPnl.Controls.Add(this.coverImgBox);
+            this.imgPnl.Location = new System.Drawing.Point(4, 37);
+            this.imgPnl.Name = "imgPnl";
+            this.imgPnl.Size = new System.Drawing.Size(755, 173);
+            this.imgPnl.TabIndex = 0;
             // 
             // editCoverImgBtn
             // 
-            this.editCoverImgBtn.BackColor = System.Drawing.Color.Transparent;
-            this.editCoverImgBtn.Cursor = System.Windows.Forms.Cursors.Default;
+            this.editCoverImgBtn.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.editCoverImgBtn.Cursor = System.Windows.Forms.Cursors.Hand;
             this.editCoverImgBtn.Image = ((System.Drawing.Image)(resources.GetObject("editCoverImgBtn.Image")));
-            this.editCoverImgBtn.Location = new System.Drawing.Point(706, 117);
+            this.editCoverImgBtn.Location = new System.Drawing.Point(722, 3);
             this.editCoverImgBtn.Name = "editCoverImgBtn";
-            this.editCoverImgBtn.Size = new System.Drawing.Size(27, 22);
+            this.editCoverImgBtn.Size = new System.Drawing.Size(28, 154);
             this.editCoverImgBtn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.editCoverImgBtn.TabIndex = 4;
             this.editCoverImgBtn.TabStop = false;
             this.editCoverImgBtn.Click += new System.EventHandler(this.editCoverImgBtn_Click);
-            this.editCoverImgBtn.MouseLeave += new System.EventHandler(this.editCoverImgBtn_MouseLeave);
-            this.editCoverImgBtn.MouseHover += new System.EventHandler(this.editCoverImgBtn_MouseHover);
             // 
             // editAvatarBtn
             // 
-            this.editAvatarBtn.BackColor = System.Drawing.Color.Transparent;
-            this.editAvatarBtn.Cursor = System.Windows.Forms.Cursors.Default;
+            this.editAvatarBtn.BackColor = System.Drawing.Color.WhiteSmoke;
+            this.editAvatarBtn.Cursor = System.Windows.Forms.Cursors.Hand;
             this.editAvatarBtn.ErrorImage = null;
             this.editAvatarBtn.Image = ((System.Drawing.Image)(resources.GetObject("editAvatarBtn.Image")));
             this.editAvatarBtn.ImageLocation = "";
-            this.editAvatarBtn.Location = new System.Drawing.Point(120, 154);
+            this.editAvatarBtn.Location = new System.Drawing.Point(19, 149);
             this.editAvatarBtn.Name = "editAvatarBtn";
-            this.editAvatarBtn.Size = new System.Drawing.Size(18, 16);
+            this.editAvatarBtn.Size = new System.Drawing.Size(119, 21);
             this.editAvatarBtn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.editAvatarBtn.TabIndex = 3;
             this.editAvatarBtn.TabStop = false;
             this.editAvatarBtn.Click += new System.EventHandler(this.editAvatarBtn_Click);
-            this.editAvatarBtn.MouseLeave += new System.EventHandler(this.editAvatarBtn_MouseLeave);
-            this.editAvatarBtn.MouseHover += new System.EventHandler(this.editAvatarBtn_MouseHover);
             // 
             // pictureBox1
             // 
@@ -140,6 +136,7 @@ namespace Band.ManageApp
             // 
             this.avatarImgBox.BackColor = System.Drawing.Color.Transparent;
             this.avatarImgBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.avatarImgBox.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.avatarImgBox.ErrorImage = ((System.Drawing.Image)(resources.GetObject("avatarImgBox.ErrorImage")));
             this.avatarImgBox.Location = new System.Drawing.Point(19, 50);
             this.avatarImgBox.Name = "avatarImgBox";
@@ -151,9 +148,10 @@ namespace Band.ManageApp
             // coverImgBox
             // 
             this.coverImgBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.coverImgBox.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.coverImgBox.Location = new System.Drawing.Point(3, 3);
             this.coverImgBox.Name = "coverImgBox";
-            this.coverImgBox.Size = new System.Drawing.Size(749, 145);
+            this.coverImgBox.Size = new System.Drawing.Size(749, 154);
             this.coverImgBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.coverImgBox.TabIndex = 0;
             this.coverImgBox.TabStop = false;
@@ -230,17 +228,6 @@ namespace Band.ManageApp
             this.nameTxtBox.Size = new System.Drawing.Size(172, 23);
             this.nameTxtBox.TabIndex = 0;
             this.nameTxtBox.TextChanged += new System.EventHandler(this.nameTxtBox_TextChanged);
-            // 
-            // saveBtn
-            // 
-            this.saveBtn.Location = new System.Drawing.Point(322, 516);
-            this.saveBtn.Name = "saveBtn";
-            this.saveBtn.Size = new System.Drawing.Size(110, 24);
-            this.saveBtn.TabIndex = 4;
-            this.saveBtn.Text = "Lưu";
-            this.saveBtn.UseVisualStyleBackColor = true;
-            this.saveBtn.Visible = false;
-            this.saveBtn.Click += new System.EventHandler(this.saveBtn_Click);
             // 
             // centerInfoPnl
             // 
@@ -457,7 +444,6 @@ namespace Band.ManageApp
             this.thanhVienCombobox.Name = "thanhVienCombobox";
             this.thanhVienCombobox.Size = new System.Drawing.Size(151, 23);
             this.thanhVienCombobox.TabIndex = 4;
-            this.thanhVienCombobox.SelectedIndexChanged += new System.EventHandler(this.thanhVienCombobox_SelectedIndexChanged);
             this.thanhVienCombobox.SelectedValueChanged += new System.EventHandler(this.thanhVienCombobox_SelectedValueChanged);
             // 
             // infoPnl
@@ -470,18 +456,28 @@ namespace Band.ManageApp
             this.infoPnl.Size = new System.Drawing.Size(756, 285);
             this.infoPnl.TabIndex = 4;
             // 
+            // saveBtn
+            // 
+            this.saveBtn.Location = new System.Drawing.Point(336, 516);
+            this.saveBtn.Name = "saveBtn";
+            this.saveBtn.Size = new System.Drawing.Size(179, 24);
+            this.saveBtn.TabIndex = 5;
+            this.saveBtn.Text = "Lưu";
+            this.saveBtn.UseVisualStyleBackColor = true;
+            this.saveBtn.Visible = false;
+            // 
             // ThanhVienUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.saveBtn);
             this.Controls.Add(this.infoPnl);
             this.Controls.Add(this.panel6);
-            this.Controls.Add(this.saveBtn);
-            this.Controls.Add(this.panel1);
+            this.Controls.Add(this.imgPnl);
             this.Name = "ThanhVienUserControl";
             this.Size = new System.Drawing.Size(762, 544);
             this.Load += new System.EventHandler(this.ThanhVienUserControl_Load);
-            this.panel1.ResumeLayout(false);
+            this.imgPnl.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.editCoverImgBtn)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.editAvatarBtn)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
@@ -530,7 +526,6 @@ namespace Band.ManageApp
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.PictureBox addMemberBtn;
-        private System.Windows.Forms.Button saveBtn;
         private System.Windows.Forms.PictureBox editAvatarBtn;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox editCoverImgBtn;
@@ -543,5 +538,7 @@ namespace Band.ManageApp
         private System.Windows.Forms.ListBox vaiTroListBox1;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.PictureBox deleteBtn;
+        private System.Windows.Forms.Panel imgPnl;
+        private System.Windows.Forms.Button saveBtn;
     }
 }

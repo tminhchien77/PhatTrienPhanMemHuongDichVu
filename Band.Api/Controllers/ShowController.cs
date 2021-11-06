@@ -47,6 +47,46 @@ namespace Band.Api.Controllers
                 return BadRequest();
             return Ok(result);
         }
+        [HttpPost]
+        public async Task<IActionResult> Create(ShowCreateRequest request)
+        {
+            var result = await _manageShowService.Create(request);
+            if (result == 0)
+                return BadRequest();
+            return Ok(true);
+        }
+        [HttpGet("byid")]
+        public async Task<IActionResult> GetById(int idShow)
+        {
+            var result = await _manageShowService.GetById(idShow);
+            if (result == null)
+                return BadRequest("Không thể tìm thấy show");
+            return Ok(result);
+        }
+        [HttpPut("show-info")]
+        public async Task<IActionResult> UpdateShowInfo(ShowInfoUpdateRequest request)
+        {
+            var result = await _manageShowService.UpdateShowInfo(request);
+            if (result == 0)
+                return BadRequest();
+            return Ok(true);
+        }
 
+        [HttpPut("ticket-info")]
+        public async Task<IActionResult> UpdateTicketInfor(TicketInfoUpdateRequest request)
+        {
+            var result = await _manageShowService.UpdateTicketInfor(request);
+            if (result<=0)
+                return BadRequest();
+            return Ok(true);
+        }
+        [HttpDelete]
+        public async Task<IActionResult> Delete(int idShow)
+        {
+            var result = await _manageShowService.Delete(idShow);
+            if (result <=0)
+                return BadRequest();
+            return Ok(true);
+        }
     }
 }

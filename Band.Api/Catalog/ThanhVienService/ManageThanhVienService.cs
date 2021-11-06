@@ -351,12 +351,21 @@ namespace Band.Api.Catalog.ThanhVienService
 
         public async Task<int> DeleteImages(List<int> listIdAnh)
         {
+            var dsHinhAnh = new List<HinhAnh>();
             foreach(var i in listIdAnh)
             {
-                var img = _context.HinhAnhDbo.Where(h => h.IdAnh == i);
-                _context.HinhAnhDbo.Remove((HinhAnh)img);
+                dsHinhAnh.Add(await _context.HinhAnhDbo.FindAsync(i));
             }
 
+            var dsThanhVienVsHinhAnh = new List<ThanhVienVsHinhAnh>();
+            foreach (var i in listIdAnh)
+            {
+                dsThanhVienVsHinhAnh.Add((from h in _context.ThanhVienVsHinhAnhDbo
+                                               where h.IdAnh.Equals(i)
+                                               select h).FirstOrDefault());
+            }
+            _context.ThanhVienVsHinhAnhDbo.RemoveRange(dsThanhVienVsHinhAnh);
+            _context.HinhAnhDbo.RemoveRange(dsHinhAnh);
             return await _context.SaveChangesAsync();
         }
 

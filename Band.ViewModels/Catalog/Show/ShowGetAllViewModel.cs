@@ -9,12 +9,12 @@ namespace Band.ViewModels.Catalog.Show
         public int IdShow { get; set; }
         public string TenShow { get; set; }
         public DateTime NgayBieuDien { get; set; }
-        /*public string DisplayCombobox
+        public string DisplayCombobox
         {
             get
             {
-                return NgayBieuDien.ToString() + "\t" + TenShow;
+                return NgayBieuDien.Date.ToShortDateString() + "     " + TenShow;
             }
-        }*/
+        }
     }
 }

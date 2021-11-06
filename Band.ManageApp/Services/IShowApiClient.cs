@@ -13,5 +13,10 @@ namespace Band.ManageApp.Services
         List<ShowGetAllViewModel> GetAll();
         List<ByteArrayImageObject> GetAllImgById(int idShow);
         bool AddingImages(ImagesShowAddRequest request);
+        bool Create(ShowCreateRequest request);
+        ShowViewModel GetById(int idShow);
+        bool UpdateShowInfor(ShowInfoUpdateRequest request);
+        bool UpdateTicketInfor(TicketInfoUpdateRequest request);
+        bool Delete(int idShow);
     }
 }

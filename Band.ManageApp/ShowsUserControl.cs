@@ -1,11 +1,13 @@
 ﻿using Band.ManageApp.Services;
 using Band.ViewModels.Catalog.LoaiVe;
 using Band.ViewModels.Catalog.Show;
+using Band.ViewModels.Utilities;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -17,10 +19,14 @@ namespace Band.ManageApp
     {
         public static ShowsUserControl _instance;
         private ShowApiClient _showsApiClient;
+        private ShowViewModel show;
         private List<LoaiVeViewModel> _dsLoaiVe;
         public static ActionType _actionType;
+        private DateTime? _lastValue;
         private List<Image> _imageList;
         private Image _image;
+        private bool isEdited;
+        private ImageHandler imageHandler;
         public event EventHandler ImageChanged;
         public Image image
         {
@@ -55,42 +61,35 @@ namespace Band.ManageApp
         public ShowsUserControl()
         {
             InitializeComponent();
+            show = new ShowViewModel();
+            imageHandler = new ImageHandler();
             _showsApiClient = new ShowApiClient();
             _dsLoaiVe = new List<LoaiVeViewModel>();
-            _actionType = ActionType.READ;
-            _dsLoaiVe = loadLoaiVe();
+            /*_actionType = ActionType.READ;*/
             ImageChanged += delegate (object sender, EventArgs arg)
             {
                 showPictureBox.Image = image;
             };
+            showPictureBox.Click += new EventHandler(editCoverImgBtn_Click);
+            Read();
+            showPictureBox.Controls.Add(editCoverImgBtn);
+            editCoverImgBtn.Location = new Point(showPictureBox.Width - editCoverImgBtn.Width - 10, showPictureBox.Height - editCoverImgBtn.Height - 10);
+            editCoverImgBtn.BackColor = Color.FromArgb(125, Color.White);
+
+            var tmp = (ShowGetAllViewModel)showsComboBox.SelectedValue;
+            if (tmp == null)
+            {
+                MessageBox.Show("Show diễn rỗng! Tiến hành thêm Show!");
+                addShow();
+            }
+
         }
         private void loadDsShow()
         {
-            var listShow = _showsApiClient.GetAll();
-            var dict = new Dictionary<int, string>();
-            foreach (var x in listShow)
-            {
-                dict.Add(x.IdShow, x.NgayBieuDien + "\t" + x.TenShow);
-            }
-
-            showsComboBox.DataSource = dict;
-            showsComboBox.DisplayMember = "Value";
-            showsComboBox.ValueMember = "Key";
-        }
-        private void flowLayoutPanel1_Paint(object sender, PaintEventArgs e)
-        {
-
+            showsComboBox.DisplayMember = "TenShow";
+            showsComboBox.DataSource = _showsApiClient.GetAll();
         }
 
-        private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
-        {
-
-        }
-
-        private void label5_Click(object sender, EventArgs e)
-        {
-            
-        }
         private List<LoaiVeViewModel> loadLoaiVe()
         {
             return _showsApiClient.GetAllLoaiVe();
@@ -112,35 +111,54 @@ namespace Band.ManageApp
             tiketTypeCol.DataSource = _dsLoaiVe;
             tiketTypeCol.DisplayMember = "TenLoai";
             tiketTypeCol.ValueMember = "IdLoaiVe";
-            /*tiketTypeCol.ValueType*/
-/*            ticketDetailsCol.DataPropertyName
-*/
+            ticketsTbl.RowCount = 3;
         }
         private void addShowBtn_Click(object sender, EventArgs e)
         {
-            _imageList = new List<Image>();
-            loadDataGridView();
-            nameTxtBox.Text = "";
-            locationTxtBox.Text = "";
-            performDatebox.Value = DateTime.Today.AddDays(1);
-            performTimeBox.Value = DateTime.Now;
-            saleDateBox.Value = DateTime.Today;
-            saleTimeBox.Value = DateTime.Now;
-            detailTicketTxtBox.Text = "";
-            saveBtn.Visible = true;
-            _actionType = ActionType.CREATE;
+            addShow();
+            
         }
 
-        private void ticketsTbl_ColumnDisplayIndexChanged(object sender, DataGridViewColumnEventArgs e)
+        private void addShow()
         {
+            bool isContinue = true;
+            if (_actionType != ActionType.READ)
+            {
 
+                if (MessageBox.Show("Thoát và không lưu?",
+                       "Chưa lưu thay đổi",
+                        MessageBoxButtons.YesNo) == DialogResult.No) isContinue = false;
+            }
+            if (isContinue)
+            {
+                _imageList = new List<Image>();
+
+                nameTxtBox.Text = "";
+                nameTxtBox.ReadOnly=false;
+                locationTxtBox.Text = "";
+                locationTxtBox.ReadOnly = false;
+                performDatebox.Value = DateTime.Today.AddDays(1);
+                performTimeBox.Value = DateTime.Now;
+                saleDateBox.Value = DateTime.Today;
+                saleTimeBox.Value = DateTime.Now;
+                detailTicketTxtBox.Text = "";
+                saveBtn.Visible = true;
+                _actionType = ActionType.CREATE;
+                deleteShowBtn.Hide();
+                editShowInfoBtn.Hide();
+                editTicketInfoBtn.Hide();
+                ticketsTbl.ReadOnly = false;
+                showsComboBox.Hide();
+            }
         }
 
         private void ticketsTbl_CellValueChanged(object sender, DataGridViewCellEventArgs e)
         {
+            if (_actionType == ActionType.UPDATE) isEdited = true;
             if (e.RowIndex >= 0)
             {
                 DataGridViewComboBoxCell cb = (DataGridViewComboBoxCell)ticketsTbl.Rows[e.RowIndex].Cells[0];
+                if (cb.Value == null) return;
                 string detail="";
                 foreach(var x in _dsLoaiVe)
                 {
@@ -152,7 +170,8 @@ namespace Band.ManageApp
                 }
                 if (cb.Value != null)
                 {
-                    ticketsTbl.Rows[e.RowIndex].Cells[1].Value = detail;
+                    detailTicketTxtBox.Text = detail;
+                    /*ticketsTbl.Rows[e.RowIndex].Cells[1].Value = detail;*/
                 }
             }
             ticketsTbl.Invalidate();
@@ -169,16 +188,6 @@ namespace Band.ManageApp
             }
         }
 
-        private void ticketsTbl_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-        }
-
-
-        private void editCoverImgBtn_MouseHover(object sender, EventArgs e)
-        {
-
-        }
 
         private void addShowBtn_MouseHover(object sender, EventArgs e)
         {
@@ -190,40 +199,506 @@ namespace Band.ManageApp
             addShowBtn.BackColor = Color.FromArgb(0, Color.Black);
         }
 
-        private void saveBtn_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void editCoverImgBtn_Click(object sender, EventArgs e)
         {
-            /*var showGetAllVm = new ShowGetAllViewModel();
-            showGetAllVm = showsComboBox.SelectedValue as ShowGetAllViewModel;*/
+            var showGetAllVm = new ShowGetAllViewModel();
+            showGetAllVm = showsComboBox.SelectedValue as ShowGetAllViewModel;
             ImagesForm imagesForm = new ImagesForm();
             if (_actionType != ActionType.CREATE)
-                imagesForm.SenderInfo(ImageType.IMG_SHOW, (int)showsComboBox.SelectedValue);
+                imagesForm.SenderInfo(ImageType.IMG_SHOW, showGetAllVm.IdShow);
             else
                 imagesForm.SenderInfo(ImageType.IMG_SHOW);
 
             imagesForm.ShowDialog();
             image = imagesForm._images.FirstOrDefault().Anh;
             if (_actionType == ActionType.CREATE && _imageList != null)
+            {
                 _imageList.Clear();
-            foreach (var x in imagesForm._images)
-            {
-                _imageList.Add(x.Anh);
-            }
-
-            /*if (imagesForm.ShowDialog() == DialogResult.OK)
-            {
-                image = imagesForm._images.FirstOrDefault().Anh;
-                if (_actionType == ActionType.CREATE && _imageList != null)
-                    _imageList.Clear();
                 foreach (var x in imagesForm._images)
                 {
                     _imageList.Add(x.Anh);
                 }
-            };*/
+            }
         }
+
+        private void showsComboBox_SelectedValueChanged(object sender, EventArgs e)
+        {
+            /*ComboBox cb = sender as ComboBox;
+            ShowGetAllViewModel tmp = cb.SelectedValue as ShowGetAllViewModel;
+            var i= tmp.IdShow;*/
+            ComboBox cb = sender as ComboBox;
+            if (cb.SelectedValue != null)
+            {
+                
+                ShowGetAllViewModel tmp = cb.SelectedValue as ShowGetAllViewModel;
+                show = _showsApiClient.GetById(tmp.IdShow);
+
+                var byteImage = imageHandler._imageConverter.ConvertFrom(show.HinhAnh);
+                image = (Image)byteImage;
+
+                bindingShowInfo(show);
+                bindingTicketInfo(show);
+
+                
+                /*twitterTxtBox.Text = thanhVien.Twitter;
+                storyTxtBox.Text = thanhVien.TieuSu;*/
+            }
+        }
+
+        private void bindingTicketInfo(ShowViewModel show)
+        {
+            for (int i = 0; i < show.DsChiTietLoaiVe.Count; i++)
+            {
+                ticketsTbl.Rows[i].Cells[0].Value = show.DsChiTietLoaiVe[i].IdLoaiVe;
+                ticketsTbl.Rows[i].Cells[1].Value = show.DsChiTietLoaiVe[i].Gia;
+                ticketsTbl.Rows[i].Cells[2].Value = show.DsChiTietLoaiVe[i].SoLuongBanRa;
+            }
+        }
+
+        private void performDatebox_ValueChanged(object sender, EventArgs e)
+        {
+            if(_lastValue.HasValue && _actionType==ActionType.READ)
+                performDatebox.Value = _lastValue.Value;
+        }
+
+        private void performDatebox_MouseCaptureChanged(object sender, EventArgs e)
+        {
+            if (_actionType == ActionType.READ)
+                _lastValue = performDatebox.Value;
+        }
+
+        private void performTimeBox_ValueChanged(object sender, EventArgs e)
+        {
+            if (_lastValue.HasValue && _actionType == ActionType.READ)
+                performTimeBox.Value = _lastValue.Value;
+        }
+
+        private void performTimeBox_MouseCaptureChanged(object sender, EventArgs e)
+        {
+            if (_actionType == ActionType.READ)
+                _lastValue = performTimeBox.Value;
+        }
+
+        private void saleDateBox_MouseCaptureChanged(object sender, EventArgs e)
+        {
+            if (_actionType == ActionType.READ)
+                _lastValue = saleDateBox.Value;
+        }
+
+        private void saleDateBox_ValueChanged(object sender, EventArgs e)
+        {
+            if (_lastValue.HasValue && _actionType == ActionType.READ)
+                saleDateBox.Value = _lastValue.Value;
+        }
+
+        private void saleTimeBox_ValueChanged(object sender, EventArgs e)
+        {
+            if (_lastValue.HasValue && _actionType == ActionType.READ)
+                saleTimeBox.Value = _lastValue.Value;
+        }
+
+        private void saleTimeBox_MouseCaptureChanged(object sender, EventArgs e)
+        {
+            if (_actionType == ActionType.READ)
+                _lastValue = saleTimeBox.Value;
+        }
+
+        private void editShowInfoBtn_Click(object sender, EventArgs e)
+        {
+            bool isContinue = true;
+            if (_actionType != ActionType.READ && saveShowInfoBtn.Visible==false)
+            {
+                isContinue = false;
+                if (MessageBox.Show("Thoát và không lưu?",
+                       "Chưa lưu thay đổi",
+                        MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    bindingTicketInfo(show);
+                    isContinue = true;
+                }
+            }
+            if (isContinue && saveShowInfoBtn.Visible == false)
+            {
+                nameTxtBox.ReadOnly = false;
+                locationTxtBox.ReadOnly = false;
+                _actionType = ActionType.UPDATE;
+                saveShowInfoBtn.Show();
+            }
+            
+        }
+
+        private void bindingShowInfo(ShowViewModel show)
+        {
+            nameTxtBox.Text = show.TenShow;
+            locationTxtBox.Text = show.DiaDiem;
+            performDatebox.Value = show.ThoiDiemBieuDien;
+            performTimeBox.Value = show.ThoiDiemBieuDien;
+            saleDateBox.Value = show.ThoiDiemMoBan;
+            saleTimeBox.Value = show.ThoiDiemMoBan;
+        }
+
+        private void editTicketInfoBtn_Click(object sender, EventArgs e)
+        {
+            bool isContinue = true;
+            if (_actionType != ActionType.READ && saveTiketInfoBtn.Visible == false)
+            {
+                isContinue = false;
+                if (MessageBox.Show("Thoát và không lưu?",
+                       "Chưa lưu thay đổi",
+                        MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    bindingShowInfo(show);
+                    isContinue = true;
+                }
+            }
+            if (isContinue && saveTiketInfoBtn.Visible == false)
+            {
+                ticketsTbl.ReadOnly = false;
+                _actionType = ActionType.UPDATE;
+                saveTiketInfoBtn.Show();
+            } 
+        }
+
+        private void saveShowInfoBtn_Click(object sender, EventArgs e)
+        {
+            ShowGetAllViewModel tmp = new ShowGetAllViewModel();
+            tmp = (ShowGetAllViewModel)showsComboBox.SelectedValue;
+            var showInfoUpdateRequest = new ShowInfoUpdateRequest()
+            {
+                IdShow= tmp.IdShow,
+                DiaDiem = locationTxtBox.Text,
+                TenShow = nameTxtBox.Text,
+                GioBieuDien = performTimeBox.Value,
+                NgayBieuDien = performDatebox.Value,
+                GioMoBan = saleTimeBox.Value,
+                NgayMoBan = saleDateBox.Value,
+            };
+            if (_showsApiClient.UpdateShowInfor(showInfoUpdateRequest))
+            {
+                MessageBox.Show("Thành công!");
+            }
+            else MessageBox.Show("Thất bại!");
+            saveTiketInfoBtn.Visible = false;
+        }
+
+/*        private void saveBtn_Click_1(object sender, EventArgs e)
+        {
+            *//*foreach (DataGridViewRow row in ticketsTbl.Rows)
+            {
+                for (int i = 0; i < row.Cells.Count; i++)
+                {
+                    if (row.Cells[i].Value == null || row.Cells[i].Value == DBNull.Value || String.IsNullOrWhiteSpace(row.Cells[i].Value.ToString()))
+                    {
+                        MessageBox.Show("Vui lòng điền đẩy đủ thông tin");
+                    }
+                }
+            }*//*
+
+            List<byte[]> byteImageList = new List<byte[]>();
+            foreach (Image img in _imageList)
+            {
+                byteImageList.Add(imageHandler.ImageToByteArray(img));
+            }
+
+            bool errorFlag = false;
+            var dsChiTietVe = new List<ChiTietVeViewModel>();
+            foreach (DataGridViewRow row in ticketsTbl.Rows)
+            {
+                int countNull = 0;
+                *//*                int i = 0;*//*
+                for (int i = 0; i < row.Cells.Count; i++)
+                {
+                    if (row.Cells[i].Value == null || row.Cells[i].Value == DBNull.Value || String.IsNullOrWhiteSpace(row.Cells[i].Value.ToString()))
+                    {
+                        countNull++;
+                    }
+                }
+                if (countNull == 3) continue;
+                else if (countNull == 0)
+                    dsChiTietVe.Add(new ChiTietVeViewModel()
+                    {
+                        IdLoaiVe = (int)row.Cells[0].Value,
+                        Gia = Convert.ToDecimal(row.Cells[1].Value.ToString()),
+                        SoLuongBanRa = Convert.ToInt32(row.Cells[2].Value.ToString())
+                    });
+                else
+                {
+                    MessageBox.Show("Vui lòng điền đầy đủ thông tin");
+                    errorFlag = true;
+                    break;
+                }
+            }
+            if (!errorFlag)
+            {
+                var showCreateRequest = new ShowCreateRequest()
+                {
+                    DiaDiem = locationTxtBox.Text,
+                    TenShow = nameTxtBox.Text,
+                    GioBieuDien = performTimeBox.Value,
+                    NgayBieuDien = performDatebox.Value,
+                    GioMoBan = saleTimeBox.Value,
+                    NgayMoBan = saleDateBox.Value,
+                    DsHinhAnh = byteImageList,
+                    DsChiTietLoaiVe = dsChiTietVe
+                };
+                if (_showsApiClient.Create(showCreateRequest))
+                {
+                    MessageBox.Show("Thành công!");
+                }
+                else MessageBox.Show("Thất bại!");
+                saveBtn.Visible = false;
+            }
+        }
+*/
+        private void ticketsTbl_EditingControlShowing(object sender, DataGridViewEditingControlShowingEventArgs e)
+        {
+            e.Control.KeyPress -= new KeyPressEventHandler(priceTicketCol_KeyPress);
+            e.Control.KeyPress -= new KeyPressEventHandler(quantityTicketCol_KeyPress);
+            if (ticketsTbl.CurrentCell.ColumnIndex == 1) //Desired Column
+            {
+                TextBox tb = e.Control as TextBox;
+                if (tb != null)
+                {
+                    tb.KeyPress += new KeyPressEventHandler(priceTicketCol_KeyPress);
+                }
+            }
+            else if (ticketsTbl.CurrentCell.ColumnIndex == 2) //Desired Column
+            {
+                TextBox tb = e.Control as TextBox;
+                if (tb != null)
+                {
+                    tb.KeyPress += new KeyPressEventHandler(quantityTicketCol_KeyPress);
+                }
+            }
+        }
+        private void ticketPriceCol_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+        private void priceTicketCol_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+        private void quantityTicketCol_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
+            {
+                e.Handled = true;
+            }
+        }
+
+        private void saveBtn_Click(object sender, EventArgs e)
+        {
+            /*foreach (DataGridViewRow row in ticketsTbl.Rows)
+            {
+                for (int i = 0; i < row.Cells.Count; i++)
+                {
+                    if (row.Cells[i].Value == null || row.Cells[i].Value == DBNull.Value || String.IsNullOrWhiteSpace(row.Cells[i].Value.ToString()))
+                    {
+                        MessageBox.Show("Vui lòng điền đẩy đủ thông tin");
+                    }
+                }
+            }*/
+
+            //Kiểm tra hình ảnh
+            if (_imageList.Count<=0)
+            {
+                MessageBox.Show("Vui lòng thêm hình ảnh quảng bá cho show diễn!");
+                return;
+            }
+            List<byte[]> byteImageList = new List<byte[]>();
+            foreach (Image img in _imageList)
+            {
+                byteImageList.Add(imageHandler.ImageToByteArray(img));
+            }
+
+            //Kiểm tra thông tin show
+            if(checkNull(nameTxtBox.Text))
+            {
+                MessageBox.Show("Vui lòng nhập tên show diễn!");
+                nameTxtBox.Focus();
+                return;
+            }
+            else if(checkNull(locationTxtBox.Text))
+            {
+                MessageBox.Show("Vui lòng nhập địa điểm diễn ra show diễn!");
+                locationTxtBox.Focus();
+                return;
+            }
+
+            //Kiểm tra danh sách loại vé
+            var dsChiTietVe = new List<ChiTietVeViewModel>();
+            getDsLoaiVeFromDGV(ref dsChiTietVe);
+            if (dsChiTietVe.Count <= 0)
+            {
+                MessageBox.Show("Vui lòng điền đầy đủ thông tin loại vé!");
+                return;
+            }
+
+            // Tạp request
+            var showCreateRequest = new ShowCreateRequest()
+            {
+                DiaDiem = locationTxtBox.Text,
+                TenShow = nameTxtBox.Text,
+                GioBieuDien = performTimeBox.Value,
+                NgayBieuDien = performDatebox.Value,
+                GioMoBan = saleTimeBox.Value,
+                NgayMoBan = saleDateBox.Value,
+                DsHinhAnh = byteImageList,
+                DsChiTietLoaiVe = dsChiTietVe
+            };
+            if (_showsApiClient.Create(showCreateRequest))
+            {
+                MessageBox.Show("Thành công!");
+                Read();
+                
+            }
+            else MessageBox.Show("Thất bại!");
+        }
+
+        private void Read()
+        {
+            _dsLoaiVe = loadLoaiVe();
+            loadDataGridView();
+            loadDsShow();
+            saveBtn.Visible = false;
+            showsComboBox.Show();
+            deleteShowBtn.Show();
+            editShowInfoBtn.Show();
+            editTicketInfoBtn.Show();
+            nameTxtBox.ReadOnly = true;
+            locationTxtBox.ReadOnly = true;
+            ticketsTbl.ReadOnly = true;
+            _actionType = ActionType.READ;
+        }
+
+        private void getDsLoaiVeFromDGV(ref List<ChiTietVeViewModel> dsChiTietVe)
+        {
+            var result = new List<ChiTietVeViewModel>();
+            foreach (DataGridViewRow row in ticketsTbl.Rows)
+            {
+                int countNull = 0;
+                for (int i = 0; i < row.Cells.Count - 1; i++)
+                {
+                    if (checkNull(row.Cells[i].Value))
+                    {
+
+                        countNull++;
+                    }
+                }
+                if (countNull == 3) continue;
+                else if (countNull == 0)
+                {
+                    result.Add(new ChiTietVeViewModel()
+                    {
+                        IdLoaiVe = (int)row.Cells[0].Value,
+                        Gia = Convert.ToDecimal(row.Cells[1].Value.ToString()),
+                        SoLuongBanRa = Convert.ToInt32(row.Cells[2].Value.ToString())
+                    });
+                }
+                else
+                {
+                    
+                    return;
+                }
+            }
+            dsChiTietVe = result;
+        }
+
+        private void ticketsTbl_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 1)
+            {
+                double price = Convert.ToDouble(ticketsTbl.Rows[e.RowIndex].Cells[1].Value);
+                ticketsTbl.Columns[1].DefaultCellStyle.Format = "c2";
+                ticketsTbl.Columns[1].DefaultCellStyle.FormatProvider = CultureInfo.GetCultureInfo("vi-VN");
+                ticketsTbl.Rows[e.RowIndex].Cells[1].Value = price;
+            }
+        }
+
+        private void saveTiketInfoBtn_Click(object sender, EventArgs e)
+        {
+            var dsChiTietVe = new List<ChiTietVeViewModel>();
+            getDsLoaiVeFromDGV(ref dsChiTietVe);
+            if (dsChiTietVe.Count <= 0)
+            {
+                MessageBox.Show("Vui lòng điền đầy đủ thông tin loại vé!");
+                return;
+            }
+            else
+            {
+                ShowGetAllViewModel tmp = (ShowGetAllViewModel)showsComboBox.SelectedValue;
+                var request = new TicketInfoUpdateRequest()
+                {
+                    IdShow = tmp.IdShow,
+                    dsChiTietVe = dsChiTietVe
+                };
+                
+                    
+                if (_showsApiClient.UpdateTicketInfor(request))
+                {
+                    MessageBox.Show("Thành công!");
+                    saveBtn.Visible = false;
+                }
+                else MessageBox.Show("Thất bại!");
+            }
+        }
+
+        private bool checkNull(object value)
+        {
+            if (value == null || value == DBNull.Value || String.IsNullOrWhiteSpace(value.ToString())) return true;
+            return false;
+        }
+
+        private void ticketsTbl_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex == 3)
+            {
+                if(MessageBox.Show("Bạn chắc chắn muốn xoá?","Thông báo",MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                {
+                    for(int i=0; i<3; i++)
+                    {
+                        ticketsTbl.Rows[e.RowIndex].Cells[i].Value = null;
+                    }
+                }
+            }
+        }
+
+        private void deleteShowBtn_Click(object sender, EventArgs e)
+        {
+            var tmp = (ShowGetAllViewModel)showsComboBox.SelectedValue;
+            if (!_showsApiClient.Delete(tmp.IdShow))
+                MessageBox.Show("Thất bại!");
+            else
+            {
+                MessageBox.Show("Thành công!");
+            }
+        }
+
+        /*private ChiTietVeViewModel checkForCorrectnessChiTietVe(object id, object price, object quantity)
+        {
+            int countNull = 0;
+            int idTicketType;
+            if (id == null) countNull++;
+            else idTicketType = (int)id;
+
+            decimal priceTicket;
+            if (price == null) countNull++;
+            else priceTicket = (decimal)price;
+
+            int quantityTicket;
+            if (quantity == null) countNull++;
+            else quantityTicket = (int)quantity;
+
+            if (countNull == 3) return null;
+            if()
+
+        }*/
     }
 }
