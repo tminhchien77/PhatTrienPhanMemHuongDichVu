@@ -8,5 +8,6 @@ namespace Band.Data.Entities
 
         public int IDHoaDon { get; set; }
         public HoaDon HoaDon { set; get; }
+        public string MaSoVe { set; get; }
     }
 }

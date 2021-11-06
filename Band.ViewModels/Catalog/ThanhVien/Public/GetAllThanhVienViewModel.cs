@@ -8,6 +8,6 @@ namespace Band.ViewModels.Catalog.ThanhVien.Public
     {
         public int IdThanhVien { get; set; }
         public string NgheDanh { get; set; }
-        public List<byte[]> Avatars { get; set; }
+        public byte[] Avatar { get; set; }
     }
 }

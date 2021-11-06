@@ -199,6 +199,9 @@ namespace Band.Data.Migrations
                     b.Property<int>("IdShow")
                         .HasColumnType("int");
 
+                    b.Property<int>("ConLai")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("Gia")
                         .HasColumnType("numeric");
 
@@ -327,9 +330,17 @@ namespace Band.Data.Migrations
                     b.Property<int>("IDHoaDon")
                         .HasColumnType("int");
 
+                    b.Property<string>("MaSoVe")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("varchar(30)");
+
                     b.HasKey("IdVe");
 
                     b.HasIndex("IDHoaDon");
+
+                    b.HasIndex("MaSoVe")
+                        .IsUnique();
 
                     b.ToTable("VE");
                 });

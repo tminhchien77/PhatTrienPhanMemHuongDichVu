@@ -23,21 +23,16 @@ namespace Band.Api.Catalog.ThanhVienService
             List<GetAllThanhVienViewModel> dsThanhVienVm = new List<GetAllThanhVienViewModel>();
             foreach (var x in dsThanhVien)
             {
-                var dsHinhAnhFromDb = await (from t in _context.ThanhVienDbo
+                var hinhAnhFromDb = await (from t in _context.ThanhVienDbo
                                              join ta in _context.ThanhVienVsHinhAnhDbo on t.IdThanhVien equals ta.IdThanhVien
                                              join a in _context.HinhAnhDbo on ta.IdAnh equals a.IdAnh
                                              where t.IdThanhVien.Equals(x.IdThanhVien) && a.IdLoai.Equals((int)ImageType.AVATAR_MEM)
-                                             select a.Anh).ToListAsync();
-                var imgList = new List<byte[]>();
-                foreach(var i in dsHinhAnhFromDb)
-                {
-                    imgList.Add(i);
-                }
+                                             select a.Anh).FirstOrDefaultAsync();
                 dsThanhVienVm.Add(new GetAllThanhVienViewModel()
                 {
                     IdThanhVien = x.IdThanhVien,
                     NgheDanh = x.NgheDanh,
-                    Avatars= imgList
+                    Avatar= hinhAnhFromDb
                 });
             }
             return dsThanhVienVm;

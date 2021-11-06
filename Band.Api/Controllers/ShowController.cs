@@ -16,10 +16,12 @@ namespace Band.Api.Controllers
     {
         private readonly ILoaiVeService _loaiVeService;
         private readonly IManageShowService _manageShowService;
-        public ShowController(ILoaiVeService loaiVeService, IManageShowService manageShowService)
+        private readonly IPublicShowService _publicShowService;
+        public ShowController(ILoaiVeService loaiVeService, IManageShowService manageShowService, IPublicShowService publicShowService)
         {
             _loaiVeService = loaiVeService;
             _manageShowService = manageShowService;
+            _publicShowService = publicShowService;
         }
         [HttpGet("loai-ve")]
         public async Task<IActionResult> GetAllLoaiVe()
@@ -87,6 +89,22 @@ namespace Band.Api.Controllers
             if (result <=0)
                 return BadRequest();
             return Ok(true);
+        }
+
+
+
+        /*****************************************************************
+         * ****************************   PUBLIC    *************************************
+         * *****************************************************************/
+
+
+        [HttpGet("public/all")]
+        public async Task<IActionResult> GetAllPublic()
+        {
+            var result = await _publicShowService.GetAll();
+            if (result == null)
+                return BadRequest("Không tìm thấy show nào");
+            return Ok(result);
         }
     }
 }

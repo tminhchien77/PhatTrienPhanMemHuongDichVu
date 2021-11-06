@@ -91,7 +91,8 @@ namespace Band.Api.Catalog.ShowServices
                     Show=show,
                     IdLoaiVe=vt.IdLoaiVe,
                     Gia=vt.Gia,
-                    SoLuongBanRa=vt.SoLuongBanRa
+                    SoLuongBanRa=vt.SoLuongBanRa,
+                    ConLai=vt.SoLuongBanRa
                 };
                 show.DsShowVsLoaiVe.Add(showVsLoaiVe);
             }
@@ -230,7 +231,8 @@ namespace Band.Api.Catalog.ShowServices
                     IdShow = request.IdShow,
                     Gia = x.Gia,
                     IdLoaiVe = x.IdLoaiVe,
-                    SoLuongBanRa = x.SoLuongBanRa
+                    SoLuongBanRa = x.SoLuongBanRa,
+                    ConLai=x.SoLuongBanRa
                 });
             }
             

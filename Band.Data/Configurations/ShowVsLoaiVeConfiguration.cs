@@ -14,6 +14,7 @@ namespace Band.Data.Configurations
             builder.HasOne(x => x.Show).WithMany(sv => sv.DsShowVsLoaiVe).HasForeignKey(x => x.IdShow);
             builder.Property(x => x.Gia).HasColumnType("numeric").IsRequired();
             builder.Property(x => x.SoLuongBanRa).IsRequired();
+            builder.Property(x => x.ConLai).IsRequired();
             builder.Property(x => x.IdShowVsLoaiVe).UseIdentityColumn().ValueGeneratedOnAdd();
         }
     }

@@ -48,6 +48,7 @@ namespace Band.Api
             services.AddTransient<IVaiTroService, VaiTroService>();
             services.AddTransient<ILoaiVeService, LoaiVeService>();
             services.AddTransient<IManageShowService, ManageShowService>();
+            services.AddTransient<IPublicShowService, PublicShowService>();
             services.AddControllers();
         }
 

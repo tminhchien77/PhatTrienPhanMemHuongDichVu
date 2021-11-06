@@ -12,6 +12,7 @@ namespace Band.Data.Entities
         public LoaiVe LoaiVe { get; set; }
         public decimal Gia { get; set; }
         public int SoLuongBanRa { get; set; }
+        public int ConLai { get; set; }
         public int IdShowVsLoaiVe { get; set; }
         public List<HoaDon> DsHoaDon { get; set; }
 
