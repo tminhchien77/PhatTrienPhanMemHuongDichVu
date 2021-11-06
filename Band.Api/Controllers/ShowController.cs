@@ -106,5 +106,14 @@ namespace Band.Api.Controllers
                 return BadRequest("Không tìm thấy show nào");
             return Ok(result);
         }
+
+        [HttpGet("public/byid")]
+        public async Task<IActionResult> GetByIdPublic(int idShow)
+        {
+            var result = await _publicShowService.GetById(idShow);
+            if (result == null)
+                return BadRequest("Không thể tìm thấy show");
+            return Ok(result);
+        }
     }
 }

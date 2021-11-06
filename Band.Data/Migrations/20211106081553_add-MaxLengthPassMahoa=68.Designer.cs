@@ -4,14 +4,16 @@ using Band.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Band.Data.Migrations
 {
     [DbContext(typeof(BandDbContext))]
-    partial class BandDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211106081553_add-MaxLengthPassMahoa=68")]
+    partial class addMaxLengthPassMahoa68
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,8 +29,8 @@ namespace Band.Data.Migrations
 
                     b.Property<string>("PasswordStored")
                         .IsRequired()
-                        .HasMaxLength(12)
-                        .HasColumnType("varchar(12)")
+                        .HasMaxLength(68)
+                        .HasColumnType("varchar(68)")
                         .HasColumnName("MatKhau");
 
                     b.Property<decimal>("SoDu")

@@ -29,6 +29,7 @@ namespace Band.Data.EF
         public virtual DbSet<ThanhVienVsVaiTro> ThanhVienVsVaiTroDbo { get; set; }
         public virtual DbSet<VaiTro> VaiTroDbo { get; set; }
         public virtual DbSet<Ve> VeDbo { get; set; }
+        public virtual DbSet<Bank> BankDbo { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -45,6 +46,7 @@ namespace Band.Data.EF
             modelBuilder.ApplyConfiguration(new VeConfiguration());
             modelBuilder.ApplyConfiguration(new LoaiVeConfiguration());
             modelBuilder.ApplyConfiguration(new ShowVsLoaiVeConfiguration());
+            modelBuilder.ApplyConfiguration(new BankConfiguration());
 
             //base.OnModelCreating(modelBuilder);
 

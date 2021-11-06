@@ -4,40 +4,22 @@ using Band.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Band.Data.Migrations
 {
     [DbContext(typeof(BandDbContext))]
-    partial class BandDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211105151408_add-generated-for-IdShowVsLoaiVe")]
+    partial class addgeneratedforIdShowVsLoaiVe
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.11")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-            modelBuilder.Entity("Band.Data.Entities.Bank", b =>
-                {
-                    b.Property<string>("IdTaiKhoan")
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
-
-                    b.Property<string>("PasswordStored")
-                        .IsRequired()
-                        .HasMaxLength(12)
-                        .HasColumnType("varchar(12)")
-                        .HasColumnName("MatKhau");
-
-                    b.Property<decimal>("SoDu")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("IdTaiKhoan");
-
-                    b.ToTable("NGANHANG");
-                });
 
             modelBuilder.Entity("Band.Data.Entities.HinhAnh", b =>
                 {
@@ -219,9 +201,6 @@ namespace Band.Data.Migrations
                     b.Property<int>("IdShow")
                         .HasColumnType("int");
 
-                    b.Property<int>("ConLai")
-                        .HasColumnType("int");
-
                     b.Property<decimal>("Gia")
                         .HasColumnType("numeric");
 
@@ -350,17 +329,9 @@ namespace Band.Data.Migrations
                     b.Property<int>("IDHoaDon")
                         .HasColumnType("int");
 
-                    b.Property<string>("MaSoVe")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("varchar(30)");
-
                     b.HasKey("IdVe");
 
                     b.HasIndex("IDHoaDon");
-
-                    b.HasIndex("MaSoVe")
-                        .IsUnique();
 
                     b.ToTable("VE");
                 });

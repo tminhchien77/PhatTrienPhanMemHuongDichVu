@@ -4,14 +4,16 @@ using Band.Data.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Band.Data.Migrations
 {
     [DbContext(typeof(BandDbContext))]
-    partial class BandDbContextModelSnapshot : ModelSnapshot
+    [Migration("20211106080717_add-BankDbo2")]
+    partial class addBankDbo2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,13 +24,12 @@ namespace Band.Data.Migrations
             modelBuilder.Entity("Band.Data.Entities.Bank", b =>
                 {
                     b.Property<string>("IdTaiKhoan")
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasMaxLength(15)
+                        .HasColumnType("varchar(15)");
 
                     b.Property<string>("PasswordStored")
                         .IsRequired()
-                        .HasMaxLength(12)
-                        .HasColumnType("varchar(12)")
+                        .HasColumnType("varchar")
                         .HasColumnName("MatKhau");
 
                     b.Property<decimal>("SoDu")
