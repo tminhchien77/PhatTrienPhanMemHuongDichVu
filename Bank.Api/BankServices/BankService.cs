@@ -1,4 +1,6 @@
 ﻿using Band.Data.EF;
+using Band.ViewModels.Common;
+using Bank.Api.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,41 +19,30 @@ namespace Bank.Api.BankServices
         {
             _context = context;
         }
-        public int GetBalance(string idTaiKhoan, decimal payment)
+        public async Task<int> GetBalance(GetBalanceRequest request)
         {
-            var balance = (from n in _context.BankDbo
-                           where n.IdTaiKhoan.Equals(idTaiKhoan)
-                           select (new { n.SoDu })).FirstOrDefault();
-            if (balance == null) return -1;
-            else
-            {
-                if (balance.SoDu < payment) return 0;
-                else return 1;
-            }
-
-
+            var acc = await _context.BankDbo.FindAsync(request.BankAccount);
+            if (acc == null) return (int)BankErrorCode.LOGIN_FAILED;
+            if (acc.SoDu < request.Payment) return (int)BankErrorCode.BALANCE_NOT_ENOUGH;
+            else return 1;
         }
 
-        public async Task<int> Pay(string idSrcAcc, string idDesAcc, string pass, decimal payment)
+        public async Task<int> CreateTransaction(PayingRequest request)
         {
-            var srcAcc = (from n in _context.BankDbo
-                          where n.IdTaiKhoan.Equals(idSrcAcc)
-                          select n).FirstOrDefault();
-            var tmp = Decrypt(srcAcc.PasswordStored);
+            var srcAcc = await _context.BankDbo.FindAsync(request.SrcAccount);
+            if (srcAcc == null || !Decrypt(srcAcc.PasswordStored).Equals(request.Password)) return (int)BankErrorCode.LOGIN_FAILED;
 
-            if (srcAcc == null || !tmp.Equals(pass)) return (int)BankErrorCode.LOGIN_FAILED;
 
-            var desAcc = (from n in _context.BankDbo
-                          where n.IdTaiKhoan.Equals(idDesAcc)
-                          select n).FirstOrDefault();
+            var desAcc = await _context.BankDbo.FindAsync(request.DesAccount);
+
             if (desAcc == null) return (int)BankErrorCode.INCORRECT_DES_ACC; //Sai tài khoản bên nhận
             else
             {
-                if (srcAcc.SoDu < payment) return (int)BankErrorCode.BALANCE_NOT_ENOUGH;//Số dư còn lại trong tài khoản không đủ 
+                if (srcAcc.SoDu < request.Payment) return (int)BankErrorCode.BALANCE_NOT_ENOUGH;
                 else
                 {
-                    srcAcc.SoDu -= payment;
-                    desAcc.SoDu += payment;
+                    srcAcc.SoDu -= request.Payment;
+                    desAcc.SoDu += request.Payment;
                     return await _context.SaveChangesAsync();
                 }
             }

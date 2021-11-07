@@ -23,7 +23,8 @@ namespace Band.ViewModels.Utilities
 
         public enum BookingErrorCode
         {
-            SOLD_OUT=-1
+            SOLD_OUT=-3,
+            BOOKED=-4
             
         }
 

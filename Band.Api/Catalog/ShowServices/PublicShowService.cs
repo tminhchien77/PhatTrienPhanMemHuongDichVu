@@ -1,6 +1,7 @@
 ﻿using Band.Data.EF;
 using Band.Data.Entities;
 using Band.ViewModels.Catalog.Show.Public;
+using Band.ViewModels.Common;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
@@ -94,54 +95,62 @@ namespace Band.Api.Catalog.ShowServices
             return showVm;
         }
 
-        public async Task<int> Pay(string idTaiKhoan, string pass, decimal payment, PublicDatVeVm chiTietDatVe)
+        public async Task<int> Booking(BookingRequest request)
         {
-            var chiTietVe = await _context.ShowVsLoaiVeDbo.FindAsync(chiTietDatVe.IdShow, chiTietDatVe.IdLoaiVe);
-            if (chiTietVe.ConLai < chiTietDatVe.SoLuong) return (int)BookingErrorCode.SOLD_OUT;
-            else
+            var tmpHoaDon = await (from h in _context.HoaDonDbo
+                                   join sl in _context.ShowVsLoaiVeDbo on h.IdShowVsLoaiVe equals sl.IdShowVsLoaiVe
+                                   where sl.IdShow.Equals(request.IdShow) && h.SDT.Equals(request.SDT)
+                                   select h).FirstOrDefaultAsync();
+            if (tmpHoaDon != null) return (int)BookingErrorCode.BOOKED;
+
+            var chiTietVe = await _context.ShowVsLoaiVeDbo.FindAsync(request.IdShow, request.IdLoaiVe);
+            if (chiTietVe.ConLai < request.SoLuong) return (int)BookingErrorCode.SOLD_OUT;
+
+            string uri = "https://localhost:44323/api/bank/";
+            var payingRequest = new PayingRequest()
             {
-                string uri = "https://localhost:44323/api/bank/";
-                var json = JsonConvert.SerializeObject(new PayingRequest ()
+                SrcAccount = request.Account,
+                DesAccount = BankAccount,
+                Password = request.Password,
+                Payment = request.SoLuong * chiTietVe.Gia
+
+            };
+            var json = JsonConvert.SerializeObject(payingRequest);
+            
+            WebClient client = new WebClient();
+            client.Headers[HttpRequestHeader.ContentType] = "application/json";
+            var response = client.UploadString(uri, "POST", json);
+            if (Int32.Parse(response) > 0)//Thanh toán thành công
+            {
+                var hoaDon = new HoaDon()
                 {
-                    idSrcAcc=idTaiKhoan, 
-                    idDesAcc= BankAccount, 
-                    pass=pass,
-                    payment=payment });
-                WebClient client = new WebClient();
-                client.Headers[HttpRequestHeader.ContentType] = "application/json";
-                var response = client.UploadString(uri, "PUT", json);
-                if (Int32.Parse(response) > 0)//Thanh toán thành công
+                    SoLuong = request.SoLuong,
+                    SDT = request.SDT,
+                    ShowVsLoaiVe = chiTietVe,
+                    NgayGiaoDich = DateTime.Now,
+                    DsVe = new List<Ve>()
+                };
+                Random ran = new Random();
+                int preRanNumber = -1;
+                for (int i = 0; i < request.SoLuong; i++)
                 {
-                    var hoaDon = new HoaDon()
+                    int randomNum = ran.Next(100000);
+                    while (randomNum == preRanNumber)
+                        randomNum = ran.Next(100000);
+                    hoaDon.DsVe.Add(new Ve()
                     {
-                        SDT = chiTietDatVe.SDT,
-                        SoLuong = chiTietDatVe.SoLuong,
-                        IdShowVsLoaiVe = chiTietVe.IdShowVsLoaiVe,
-                        NgayGiaoDich = DateTime.Now
-                    };
-                    var dsve = new List<Ve>();
-                    Random ran = new Random();
-                    int preRanNumber = -1;
-                    for (int i = 0; i < chiTietDatVe.SoLuong; i++)
-                    {
-                        int getRanNum = ran.Next(100000);
-                        while (getRanNum == preRanNumber)
-                            getRanNum = ran.Next(100000);
-                        dsve.Add(new Ve()
-                        {
-                            HoaDon = hoaDon,
-                            MaSoVe = i.ToString() + hoaDon.NgayGiaoDich.ToString("MMddyyHHmmssfffffff") + $"{getRanNum}".PadLeft(5, '0')
-                        });
-                        preRanNumber = getRanNum;
-                    }
-                    chiTietVe.ConLai -= chiTietDatVe.SoLuong;
-                    await _context.AddAsync(hoaDon);
-                    await _context.AddRangeAsync(dsve);
-                    return await _context.SaveChangesAsync();
+                        HoaDon = hoaDon,
+                        MaSoVe = i.ToString() + hoaDon.NgayGiaoDich.ToString("MMddyyyyhhmmssfffffff") + $"{randomNum}".PadLeft(3, '0')
+                    });
+                    preRanNumber = randomNum;
                 }
-                
-                else return Int32.Parse(response);
+                chiTietVe.ConLai -= request.SoLuong;
+                await _context.AddAsync(hoaDon);
+                /*await _context.AddRangeAsync(dsve);*/
+                return await _context.SaveChangesAsync();
             }
+                
+            else return Int32.Parse(response);
         }
     }
 }

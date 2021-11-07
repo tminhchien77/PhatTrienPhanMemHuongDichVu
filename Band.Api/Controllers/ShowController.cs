@@ -118,9 +118,9 @@ namespace Band.Api.Controllers
         }
 
         [HttpPost("booking")]
-        public async Task<IActionResult> UpdateBalance(BookingRequest request)
+        public async Task<IActionResult> Booking(BookingRequest request)
         {
-            var result = await _publicShowService.Pay(request.idSrcAcc, request.pass, request.payment, request.chiTietDatVe);
+            var result = await _publicShowService.Booking(request);
             return Ok(result);
         }
     }

@@ -4,11 +4,13 @@ using System.Text;
 
 namespace Band.ViewModels.Catalog.Show.Public
 {
-    public class BookingRequest: PublicDatVeVm
+    public class BookingRequest
     {
-        public string idSrcAcc { get; set; }
-        public string pass { get; set; }
-        public decimal payment { get; set; }
-        public PublicDatVeVm chiTietDatVe { get; set; }
+        public int IdShow { get; set; }
+        public int IdLoaiVe { get; set; }
+        public int SoLuong { get; set; }
+        public string SDT { get; set; }
+        public string Account { get; set; }
+        public string Password { get; set; }
     }
 }

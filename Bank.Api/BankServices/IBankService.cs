@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Band.ViewModels.Common;
+using Bank.Api.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -7,7 +9,7 @@ namespace Bank.Api.BankServices
 {
     public interface IBankService
     {
-        int GetBalance(string idTaiKhoan, decimal payment);
-        Task<int> Pay(string idSrcAcc, string idDesAcc, string pass, decimal payment);
+        Task<int> GetBalance(GetBalanceRequest request);
+        Task<int> CreateTransaction(PayingRequest request);
     }
 }

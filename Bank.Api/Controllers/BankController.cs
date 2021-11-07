@@ -1,5 +1,7 @@
 ﻿using Band.ViewModels.Catalog.Show.Public;
+using Band.ViewModels.Common;
 using Bank.Api.BankServices;
+using Bank.Api.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -21,16 +23,16 @@ namespace Bank.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetBalance(string idTaiKhoan, decimal payment)
+        public async Task<IActionResult> GetBalance(GetBalanceRequest request)
         {
-            var balance = _bankService.GetBalance(idTaiKhoan, payment);
+            var balance = _bankService.GetBalance(request);
             return Ok(balance);
         }
 
-        [HttpPut]
+        [HttpPost]
         public async Task<IActionResult> UpdateBalance(PayingRequest request)
         {
-            var result = await _bankService.Pay(request.idSrcAcc, request.idDesAcc, request.pass, request.payment);
+            var result = await _bankService.CreateTransaction(request);
             return Ok(result);
         }
     }
