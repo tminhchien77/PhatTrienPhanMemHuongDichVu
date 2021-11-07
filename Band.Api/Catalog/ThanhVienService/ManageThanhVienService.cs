@@ -248,32 +248,7 @@ namespace Band.Api.Catalog.ThanhVienService
                     NgheDanh = x.NgheDanh
                 });
             }
-                /*foreach (var x in dsThanhVien)
-                {
-                    var hinhAnh= await (from t in _context.ThanhVienDbo
-                                          join ta in _context.ThanhVienVsHinhAnhDbo on t.IdThanhVien equals ta.IdThanhVien
-                                          join a in _context.HinhAnhDbo on ta.IdAnh equals a.IdAnh
-                                          where t.IdThanhVien.Equals(x.IdThanhVien)
-                                          select a.Anh).FirstOrDefaultAsync();
-                    var dsVaiTro= await (from t in _context.ThanhVienDbo
-                                         join tv in _context.ThanhVienVsVaiTroDbo on t.IdThanhVien equals tv.IdThanhVien
-                                         join v in _context.VaiTroDbo on tv.IdVaiTro equals v.IdVaiTro
-                                         where t.IdThanhVien.Equals(x.IdThanhVien)
-                                         select v.TenVaiTro).ToListAsync();
-                    dsThanhVienVm.Add(new ThanhVienViewModel()
-                    {
-                        DebutDate = x.DebutDate,
-                        DsVaiTro = dsVaiTro,
-                        HinhAnh = hinhAnh,
-                        Instagram = x.Instagram,
-                        NgaySinh = x.NgaySinh,
-                        NgheDanh = x.NgheDanh,
-                        QuocTich = x.QuocTich,
-                        TenKhaiSinh = x.TenKhaiSinh,
-                        TieuSu = x.TieuSu,
-                        Twitter = x.Twitter
-                    });
-                }*/
+           
                 return dsThanhVienVm;
         }
 

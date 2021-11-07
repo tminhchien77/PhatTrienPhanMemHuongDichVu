@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Band.ViewModels", "Band.Vie
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Band.ManageApp", "Band.ManageApp\Band.ManageApp.csproj", "{5016A259-55BE-4473-8D87-FF17593909AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Band.Web", "Band.Web\Band.Web.csproj", "{3D819DBB-10E8-47F4-B812-D972706F2463}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Band.Web", "Band.Web\Band.Web.csproj", "{3D819DBB-10E8-47F4-B812-D972706F2463}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bank.Api", "Bank.Api\Bank.Api.csproj", "{0668DC4B-F039-4FF5-A97E-1385B35C6659}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{3D819DBB-10E8-47F4-B812-D972706F2463}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D819DBB-10E8-47F4-B812-D972706F2463}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D819DBB-10E8-47F4-B812-D972706F2463}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0668DC4B-F039-4FF5-A97E-1385B35C6659}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0668DC4B-F039-4FF5-A97E-1385B35C6659}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0668DC4B-F039-4FF5-A97E-1385B35C6659}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0668DC4B-F039-4FF5-A97E-1385B35C6659}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

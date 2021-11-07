@@ -10,5 +10,6 @@ namespace Band.Api.Catalog.ShowServices
     {
         Task<List<PublicShowGetAllVm>> GetAll();
         Task<PublicGetByIdShowVm> GetById(int idShow);
+        Task<int> Pay(string idTaiKhoan, string pass, decimal payment, PublicDatVeVm ChiTietDatVe);
     }
 }

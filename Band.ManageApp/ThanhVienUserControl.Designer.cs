@@ -465,6 +465,7 @@ namespace Band.ManageApp
             this.saveBtn.Text = "Lưu";
             this.saveBtn.UseVisualStyleBackColor = true;
             this.saveBtn.Visible = false;
+            this.saveBtn.Click += new System.EventHandler(this.saveBtn_Click);
             // 
             // ThanhVienUserControl
             // 

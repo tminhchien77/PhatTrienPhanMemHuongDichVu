@@ -1,6 +1,7 @@
 ﻿using Band.Api.Catalog.LoaiVeServices;
 using Band.Api.Catalog.ShowServices;
 using Band.ViewModels.Catalog.Show;
+using Band.ViewModels.Catalog.Show.Public;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -113,6 +114,13 @@ namespace Band.Api.Controllers
             var result = await _publicShowService.GetById(idShow);
             if (result == null)
                 return BadRequest("Không thể tìm thấy show");
+            return Ok(result);
+        }
+
+        [HttpPost("booking")]
+        public async Task<IActionResult> UpdateBalance(BookingRequest request)
+        {
+            var result = await _publicShowService.Pay(request.idSrcAcc, request.pass, request.payment, request.chiTietDatVe);
             return Ok(result);
         }
     }

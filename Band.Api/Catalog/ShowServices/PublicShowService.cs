@@ -1,9 +1,12 @@
 ﻿using Band.Data.EF;
+using Band.Data.Entities;
 using Band.ViewModels.Catalog.Show.Public;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using static Band.ViewModels.Utilities.SystemConstants;
 
@@ -89,6 +92,56 @@ namespace Band.Api.Catalog.ShowServices
                 DsLoaiVe = dsChiTietVe,
             };
             return showVm;
+        }
+
+        public async Task<int> Pay(string idTaiKhoan, string pass, decimal payment, PublicDatVeVm chiTietDatVe)
+        {
+            var chiTietVe = await _context.ShowVsLoaiVeDbo.FindAsync(chiTietDatVe.IdShow, chiTietDatVe.IdLoaiVe);
+            if (chiTietVe.ConLai < chiTietDatVe.SoLuong) return (int)BookingErrorCode.SOLD_OUT;
+            else
+            {
+                string uri = "https://localhost:44323/api/bank/";
+                var json = JsonConvert.SerializeObject(new PayingRequest ()
+                {
+                    idSrcAcc=idTaiKhoan, 
+                    idDesAcc= BankAccount, 
+                    pass=pass,
+                    payment=payment });
+                WebClient client = new WebClient();
+                client.Headers[HttpRequestHeader.ContentType] = "application/json";
+                var response = client.UploadString(uri, "PUT", json);
+                if (Int32.Parse(response) > 0)//Thanh toán thành công
+                {
+                    var hoaDon = new HoaDon()
+                    {
+                        SDT = chiTietDatVe.SDT,
+                        SoLuong = chiTietDatVe.SoLuong,
+                        IdShowVsLoaiVe = chiTietVe.IdShowVsLoaiVe,
+                        NgayGiaoDich = DateTime.Now
+                    };
+                    var dsve = new List<Ve>();
+                    Random ran = new Random();
+                    int preRanNumber = -1;
+                    for (int i = 0; i < chiTietDatVe.SoLuong; i++)
+                    {
+                        int getRanNum = ran.Next(100000);
+                        while (getRanNum == preRanNumber)
+                            getRanNum = ran.Next(100000);
+                        dsve.Add(new Ve()
+                        {
+                            HoaDon = hoaDon,
+                            MaSoVe = i.ToString() + hoaDon.NgayGiaoDich.ToString("MMddyyHHmmssfffffff") + $"{getRanNum}".PadLeft(5, '0')
+                        });
+                        preRanNumber = getRanNum;
+                    }
+                    chiTietVe.ConLai -= chiTietDatVe.SoLuong;
+                    await _context.AddAsync(hoaDon);
+                    await _context.AddRangeAsync(dsve);
+                    return await _context.SaveChangesAsync();
+                }
+                
+                else return Int32.Parse(response);
+            }
         }
     }
 }
