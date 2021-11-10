@@ -24,13 +24,16 @@ namespace Band.Api.Catalog.ShowServices
         }
         public async Task<List<PublicShowGetAllVm>> GetAll()
         {
-            var dsShow = _context.ShowDbo.Where(p=>p.ThoiDiemBieuDien>DateTime.Now).Select(p => new { p.IdShow, p.TenShow, p.ThoiDiemBieuDien, p.ThoiDiemMoBan }).ToList();
+            var dsShow = await _context.ShowDbo.Where(p => p.ThoiDiemBieuDien > DateTime.Now 
+                            && p.ThoiDiemBieuDien < DateTime.Now.AddMonths(1)).
+                            Select(p => new { p.IdShow, p.TenShow, p.ThoiDiemBieuDien, p.ThoiDiemMoBan }).ToListAsync();
             var dsShowVm = new List<PublicShowGetAllVm>();
-            foreach (var x in dsShow)
+            var count = (dsShow.Count>3)? 3: dsShow.Count;
+            for(int i=0; i<count; i++)
             {
                 var hinhAnhFromDb = (from sa in _context.ShowVsHinhAnhDbo
                                           join a in _context.HinhAnhDbo on sa.IdAnh equals a.IdAnh
-                                            where sa.IdShow.Equals(x.IdShow) && a.IdLoai.Equals((int)ImageType.IMG_SHOW)
+                                            where sa.IdShow.Equals(dsShow[i].IdShow) && a.IdLoai.Equals((int)ImageType.IMG_SHOW)
                                             select a.Anh).FirstOrDefault();
 /*                var imgList = new List<byte[]>();
                 foreach (var i in dsHinhAnhFromDb)
@@ -39,10 +42,10 @@ namespace Band.Api.Catalog.ShowServices
                 }*/
                 dsShowVm.Add(new PublicShowGetAllVm()
                 {
-                    IdShow = x.IdShow,
-                    TenShow = x.TenShow,
-                    NgayBieuDien = x.ThoiDiemBieuDien.Date,
-                    ThoiDiemMoBan=x.ThoiDiemMoBan,
+                    IdShow = dsShow[i].IdShow,
+                    TenShow = dsShow[i].TenShow,
+                    NgayBieuDien = dsShow[i].ThoiDiemBieuDien.Date,
+                    ThoiDiemMoBan= dsShow[i].ThoiDiemMoBan,
                     HinhAnh= hinhAnhFromDb
                 });
             }
@@ -53,6 +56,7 @@ namespace Band.Api.Catalog.ShowServices
         public async Task<PublicGetByIdShowVm> GetById(int idShow)
         {
             var show = await _context.ShowDbo.FindAsync(idShow);
+            if (show == null) return null;
             var dsHinhAnhFromDb = await (from sa in _context.ShowVsHinhAnhDbo
                                    join a in _context.HinhAnhDbo on sa.IdAnh equals a.IdAnh
                                    where sa.IdShow.Equals(idShow) && a.IdLoai.Equals((int)ImageType.IMG_SHOW)
@@ -97,6 +101,8 @@ namespace Band.Api.Catalog.ShowServices
 
         public async Task<int> Booking(BookingRequest request)
         {
+            var show = await _context.ShowDbo.FindAsync(request.IdShow);
+            if (show.ThoiDiemMoBan < DateTime.Now || show.ThoiDiemBieuDien > DateTime.Now.AddHours(1)) return (int)BookingErrorCode.OFF_HOURS;
             var tmpHoaDon = await (from h in _context.HoaDonDbo
                                    join sl in _context.ShowVsLoaiVeDbo on h.IdShowVsLoaiVe equals sl.IdShowVsLoaiVe
                                    where sl.IdShow.Equals(request.IdShow) && h.SDT.Equals(request.SDT)
@@ -134,9 +140,9 @@ namespace Band.Api.Catalog.ShowServices
                 int preRanNumber = -1;
                 for (int i = 0; i < request.SoLuong; i++)
                 {
-                    int randomNum = ran.Next(100000);
+                    int randomNum = ran.Next(1000);
                     while (randomNum == preRanNumber)
-                        randomNum = ran.Next(100000);
+                        randomNum = ran.Next(1000);
                     hoaDon.DsVe.Add(new Ve()
                     {
                         HoaDon = hoaDon,
@@ -147,10 +153,44 @@ namespace Band.Api.Catalog.ShowServices
                 chiTietVe.ConLai -= request.SoLuong;
                 await _context.AddAsync(hoaDon);
                 /*await _context.AddRangeAsync(dsve);*/
-                return await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
+                return hoaDon.IdHoaDon;
             }
                 
             else return Int32.Parse(response);
+        }
+
+        public async Task<HoaDonVm> GetHoaDonById(int idHoaDon)
+        {
+            var hoaDon = await _context.HoaDonDbo.FindAsync(idHoaDon);
+            var dsVeFromDb = await (from h in _context.HoaDonDbo
+                                    join v in _context.VeDbo on h.IdHoaDon equals v.IDHoaDon
+                                    where h.IdHoaDon.Equals(idHoaDon)
+                                    select v.MaSoVe).ToListAsync();
+            var showVsLoaiVe = await (from sv in _context.ShowVsLoaiVeDbo
+                              join s in _context.ShowDbo on sv.IdShow equals s.IdShow
+                              where sv.IdShowVsLoaiVe.Equals(hoaDon.IdShowVsLoaiVe)
+                              select new { s.DiaDiem, s.TenShow, s.ThoiDiemBieuDien, sv.Gia, sv.IdLoaiVe }).FirstOrDefaultAsync();
+            var loaiVe = await _context.LoaiVeDbo.FindAsync(showVsLoaiVe.IdLoaiVe);
+            var dsVe = new List<string>();
+            foreach(var x in dsVeFromDb)
+            {
+                dsVe.Add(x);
+            }
+            var result = new HoaDonVm()
+            {
+                DiaDiem = showVsLoaiVe.DiaDiem,
+                DsMaSoVe = dsVe,
+                Gia = showVsLoaiVe.Gia,
+                IdHoaDon = hoaDon.IdHoaDon,
+                NgayGiaoDich = hoaDon.NgayGiaoDich,
+                SDT = hoaDon.SDT,
+                SoLuong = hoaDon.SoLuong,
+                TenLoai = loaiVe.TenLoai,
+                TenShow = showVsLoaiVe.TenShow,
+                ThoiDiemBieuDien = showVsLoaiVe.ThoiDiemBieuDien
+            };
+            return result;
         }
     }
 }

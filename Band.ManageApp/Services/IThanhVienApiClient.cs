@@ -15,6 +15,7 @@ namespace Band.ManageApp.Services
         List<ThanhVienGetAllViewModel> GetAll();
         List<VaiTroViewModel> GetAllVaiTro();
         bool UpdateThanhVien(ThanhVienUpdateRequestWithoutVaiTro request);
+        bool UpdatePosition(ThanhVienUpdatePositionRequest request);
         ThanhVienViewModel GetById(int idThanhVien);
         bool AddingImages(HinhAnhThanhVienRequest request);
         List<ByteArrayImageObject> GetAllAvatarById(int idThanhVien);

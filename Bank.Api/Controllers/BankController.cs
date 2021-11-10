@@ -22,7 +22,7 @@ namespace Bank.Api.Controllers
             _bankService = bankService;
         }
 
-        [HttpGet]
+        [HttpPost("get-balance")]
         public async Task<IActionResult> GetBalance(GetBalanceRequest request)
         {
             var balance = _bankService.GetBalance(request);

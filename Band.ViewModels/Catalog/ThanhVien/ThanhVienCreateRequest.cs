@@ -16,7 +16,7 @@ namespace Band.ViewModels.Catalog.ThanhVien
         public string Twitter { get; set; }
         public List<byte[]> DsAvatar { get; set; }
         public List<byte[]> DsCover { get; set; }
-        public List<int> DsIdVaiTro { get; set; }
-        /*public List<string>? DsTenVaiTro { get; set; }*/
+        public List<int>? DsIdVaiTro { get; set; }
+        public List<string>? DsVaiTroMoi { get; set; }
     }
 }

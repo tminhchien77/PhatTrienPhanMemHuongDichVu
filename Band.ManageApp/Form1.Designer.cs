@@ -30,10 +30,10 @@ namespace Band.ManageApp
         private void InitializeComponent()
         {
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.nhómToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.BandToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ThanhVienMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.thốngKêToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.statiscalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainContainer = new System.Windows.Forms.Panel();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -41,21 +41,22 @@ namespace Band.ManageApp
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.nhómToolStripMenuItem,
+            this.BandToolStripMenuItem,
             this.ThanhVienMenuItem,
             this.showToolStripMenuItem,
-            this.thốngKêToolStripMenuItem});
+            this.statiscalToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(800, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(927, 24);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // nhómToolStripMenuItem
+            // BandToolStripMenuItem
             // 
-            this.nhómToolStripMenuItem.Name = "nhómToolStripMenuItem";
-            this.nhómToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
-            this.nhómToolStripMenuItem.Text = "Nhóm";
+            this.BandToolStripMenuItem.Name = "BandToolStripMenuItem";
+            this.BandToolStripMenuItem.Size = new System.Drawing.Size(53, 20);
+            this.BandToolStripMenuItem.Text = "Nhóm";
+            this.BandToolStripMenuItem.Click += new System.EventHandler(this.BandToolStripMenuItem_Click);
             // 
             // ThanhVienMenuItem
             // 
@@ -71,30 +72,32 @@ namespace Band.ManageApp
             this.showToolStripMenuItem.Text = "Show";
             this.showToolStripMenuItem.Click += new System.EventHandler(this.showToolStripMenuItem_Click);
             // 
-            // thốngKêToolStripMenuItem
+            // statiscalToolStripMenuItem
             // 
-            this.thốngKêToolStripMenuItem.Name = "thốngKêToolStripMenuItem";
-            this.thốngKêToolStripMenuItem.Size = new System.Drawing.Size(68, 20);
-            this.thốngKêToolStripMenuItem.Text = "Thống kê";
+            this.statiscalToolStripMenuItem.Name = "statiscalToolStripMenuItem";
+            this.statiscalToolStripMenuItem.Size = new System.Drawing.Size(68, 20);
+            this.statiscalToolStripMenuItem.Text = "Thống kê";
+            this.statiscalToolStripMenuItem.Click += new System.EventHandler(this.statiscalToolStripMenuItem_Click);
             // 
             // mainContainer
             // 
             this.mainContainer.AutoScroll = true;
-            this.mainContainer.Location = new System.Drawing.Point(12, 27);
+            this.mainContainer.Location = new System.Drawing.Point(12, 39);
             this.mainContainer.Name = "mainContainer";
-            this.mainContainer.Size = new System.Drawing.Size(776, 539);
+            this.mainContainer.Size = new System.Drawing.Size(900, 670);
             this.mainContainer.TabIndex = 1;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 578);
+            this.ClientSize = new System.Drawing.Size(927, 722);
             this.Controls.Add(this.mainContainer);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Hệ thống quán lý nhóm nhạc ";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -105,10 +108,10 @@ namespace Band.ManageApp
         #endregion
 
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem nhómToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem BandToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ThanhVienMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem thốngKêToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem statiscalToolStripMenuItem;
         private System.Windows.Forms.Panel mainContainer;
     }
 }

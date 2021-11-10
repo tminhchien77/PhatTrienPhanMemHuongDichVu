@@ -29,6 +29,12 @@ namespace Band.ViewModels.Utilities
             this.OnChange();
         }
 
+        public new void RemoveRange(int index, int count)
+        {
+            base.RemoveRange(index, count);
+            this.OnChange();
+        }
+
         public new void Clear()
         {
             base.Clear();

@@ -33,7 +33,6 @@ namespace Band.ManageApp
             this.imgPnl = new System.Windows.Forms.Panel();
             this.editCoverImgBtn = new System.Windows.Forms.PictureBox();
             this.editAvatarBtn = new System.Windows.Forms.PictureBox();
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.avatarImgBox = new System.Windows.Forms.PictureBox();
             this.coverImgBox = new System.Windows.Forms.PictureBox();
             this.leftInfoPnl = new System.Windows.Forms.Panel();
@@ -44,10 +43,11 @@ namespace Band.ManageApp
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.nameTxtBox = new System.Windows.Forms.TextBox();
+            this.dsVaiTroLbl = new System.Windows.Forms.ListBox();
             this.centerInfoPnl = new System.Windows.Forms.Panel();
+            this.addVaiTroBtn = new System.Windows.Forms.PictureBox();
             this.vaiTroListBox = new System.Windows.Forms.CheckedListBox();
             this.editVaiTroBtn = new System.Windows.Forms.PictureBox();
-            this.dsVaiTroLbl = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.twitterTxtBox = new System.Windows.Forms.TextBox();
@@ -58,8 +58,6 @@ namespace Band.ManageApp
             this.label4 = new System.Windows.Forms.Label();
             this.stageNameTxtBox = new System.Windows.Forms.TextBox();
             this.rightInfoPnl = new System.Windows.Forms.Panel();
-            this.extraInfoTxtBox = new System.Windows.Forms.RichTextBox();
-            this.label9 = new System.Windows.Forms.Label();
             this.storyTxtBox = new System.Windows.Forms.RichTextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.addMemberBtn = new System.Windows.Forms.PictureBox();
@@ -68,14 +66,15 @@ namespace Band.ManageApp
             this.thanhVienCombobox = new System.Windows.Forms.ComboBox();
             this.infoPnl = new System.Windows.Forms.Panel();
             this.saveBtn = new System.Windows.Forms.Button();
+            this.exitBtn = new System.Windows.Forms.Button();
             this.imgPnl.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.editCoverImgBtn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.editAvatarBtn)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.avatarImgBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.coverImgBox)).BeginInit();
             this.leftInfoPnl.SuspendLayout();
             this.centerInfoPnl.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.addVaiTroBtn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.editVaiTroBtn)).BeginInit();
             this.rightInfoPnl.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.addMemberBtn)).BeginInit();
@@ -88,12 +87,11 @@ namespace Band.ManageApp
             // 
             this.imgPnl.Controls.Add(this.editCoverImgBtn);
             this.imgPnl.Controls.Add(this.editAvatarBtn);
-            this.imgPnl.Controls.Add(this.pictureBox1);
             this.imgPnl.Controls.Add(this.avatarImgBox);
             this.imgPnl.Controls.Add(this.coverImgBox);
-            this.imgPnl.Location = new System.Drawing.Point(4, 37);
+            this.imgPnl.Location = new System.Drawing.Point(17, 38);
             this.imgPnl.Name = "imgPnl";
-            this.imgPnl.Size = new System.Drawing.Size(755, 173);
+            this.imgPnl.Size = new System.Drawing.Size(860, 243);
             this.imgPnl.TabIndex = 0;
             // 
             // editCoverImgBtn
@@ -101,9 +99,9 @@ namespace Band.ManageApp
             this.editCoverImgBtn.BackColor = System.Drawing.Color.WhiteSmoke;
             this.editCoverImgBtn.Cursor = System.Windows.Forms.Cursors.Hand;
             this.editCoverImgBtn.Image = ((System.Drawing.Image)(resources.GetObject("editCoverImgBtn.Image")));
-            this.editCoverImgBtn.Location = new System.Drawing.Point(722, 3);
+            this.editCoverImgBtn.Location = new System.Drawing.Point(724, 176);
             this.editCoverImgBtn.Name = "editCoverImgBtn";
-            this.editCoverImgBtn.Size = new System.Drawing.Size(28, 154);
+            this.editCoverImgBtn.Size = new System.Drawing.Size(123, 26);
             this.editCoverImgBtn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.editCoverImgBtn.TabIndex = 4;
             this.editCoverImgBtn.TabStop = false;
@@ -116,21 +114,13 @@ namespace Band.ManageApp
             this.editAvatarBtn.ErrorImage = null;
             this.editAvatarBtn.Image = ((System.Drawing.Image)(resources.GetObject("editAvatarBtn.Image")));
             this.editAvatarBtn.ImageLocation = "";
-            this.editAvatarBtn.Location = new System.Drawing.Point(19, 149);
+            this.editAvatarBtn.Location = new System.Drawing.Point(26, 201);
             this.editAvatarBtn.Name = "editAvatarBtn";
-            this.editAvatarBtn.Size = new System.Drawing.Size(119, 21);
+            this.editAvatarBtn.Size = new System.Drawing.Size(170, 21);
             this.editAvatarBtn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.editAvatarBtn.TabIndex = 3;
             this.editAvatarBtn.TabStop = false;
             this.editAvatarBtn.Click += new System.EventHandler(this.editAvatarBtn_Click);
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.Location = new System.Drawing.Point(280, 173);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(28, 24);
-            this.pictureBox1.TabIndex = 2;
-            this.pictureBox1.TabStop = false;
             // 
             // avatarImgBox
             // 
@@ -138,9 +128,9 @@ namespace Band.ManageApp
             this.avatarImgBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.avatarImgBox.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.avatarImgBox.ErrorImage = ((System.Drawing.Image)(resources.GetObject("avatarImgBox.ErrorImage")));
-            this.avatarImgBox.Location = new System.Drawing.Point(19, 50);
+            this.avatarImgBox.Location = new System.Drawing.Point(26, 44);
             this.avatarImgBox.Name = "avatarImgBox";
-            this.avatarImgBox.Size = new System.Drawing.Size(119, 123);
+            this.avatarImgBox.Size = new System.Drawing.Size(170, 186);
             this.avatarImgBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.avatarImgBox.TabIndex = 1;
             this.avatarImgBox.TabStop = false;
@@ -151,7 +141,7 @@ namespace Band.ManageApp
             this.coverImgBox.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.coverImgBox.Location = new System.Drawing.Point(3, 3);
             this.coverImgBox.Name = "coverImgBox";
-            this.coverImgBox.Size = new System.Drawing.Size(749, 154);
+            this.coverImgBox.Size = new System.Drawing.Size(855, 210);
             this.coverImgBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.coverImgBox.TabIndex = 0;
             this.coverImgBox.TabStop = false;
@@ -167,7 +157,7 @@ namespace Band.ManageApp
             this.leftInfoPnl.Controls.Add(this.nameTxtBox);
             this.leftInfoPnl.Location = new System.Drawing.Point(4, 3);
             this.leftInfoPnl.Name = "leftInfoPnl";
-            this.leftInfoPnl.Size = new System.Drawing.Size(263, 279);
+            this.leftInfoPnl.Size = new System.Drawing.Size(263, 297);
             this.leftInfoPnl.TabIndex = 1;
             // 
             // label11
@@ -229,11 +219,22 @@ namespace Band.ManageApp
             this.nameTxtBox.TabIndex = 0;
             this.nameTxtBox.TextChanged += new System.EventHandler(this.nameTxtBox_TextChanged);
             // 
+            // dsVaiTroLbl
+            // 
+            this.dsVaiTroLbl.FormattingEnabled = true;
+            this.dsVaiTroLbl.ItemHeight = 15;
+            this.dsVaiTroLbl.Location = new System.Drawing.Point(11, 200);
+            this.dsVaiTroLbl.Name = "dsVaiTroLbl";
+            this.dsVaiTroLbl.Size = new System.Drawing.Size(253, 94);
+            this.dsVaiTroLbl.TabIndex = 14;
+            this.dsVaiTroLbl.Visible = false;
+            // 
             // centerInfoPnl
             // 
+            this.centerInfoPnl.Controls.Add(this.dsVaiTroLbl);
+            this.centerInfoPnl.Controls.Add(this.addVaiTroBtn);
             this.centerInfoPnl.Controls.Add(this.vaiTroListBox);
             this.centerInfoPnl.Controls.Add(this.editVaiTroBtn);
-            this.centerInfoPnl.Controls.Add(this.dsVaiTroLbl);
             this.centerInfoPnl.Controls.Add(this.label10);
             this.centerInfoPnl.Controls.Add(this.label7);
             this.centerInfoPnl.Controls.Add(this.twitterTxtBox);
@@ -245,16 +246,28 @@ namespace Band.ManageApp
             this.centerInfoPnl.Controls.Add(this.stageNameTxtBox);
             this.centerInfoPnl.Location = new System.Drawing.Point(273, 3);
             this.centerInfoPnl.Name = "centerInfoPnl";
-            this.centerInfoPnl.Size = new System.Drawing.Size(275, 279);
+            this.centerInfoPnl.Size = new System.Drawing.Size(275, 297);
             this.centerInfoPnl.TabIndex = 2;
+            // 
+            // addVaiTroBtn
+            // 
+            this.addVaiTroBtn.Image = ((System.Drawing.Image)(resources.GetObject("addVaiTroBtn.Image")));
+            this.addVaiTroBtn.Location = new System.Drawing.Point(57, 172);
+            this.addVaiTroBtn.Name = "addVaiTroBtn";
+            this.addVaiTroBtn.Size = new System.Drawing.Size(30, 22);
+            this.addVaiTroBtn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.addVaiTroBtn.TabIndex = 3;
+            this.addVaiTroBtn.TabStop = false;
+            this.addVaiTroBtn.Visible = false;
+            this.addVaiTroBtn.Click += new System.EventHandler(this.addVaiTroBtn_Click);
             // 
             // vaiTroListBox
             // 
             this.vaiTroListBox.CheckOnClick = true;
             this.vaiTroListBox.FormattingEnabled = true;
-            this.vaiTroListBox.Location = new System.Drawing.Point(93, 175);
+            this.vaiTroListBox.Location = new System.Drawing.Point(11, 200);
             this.vaiTroListBox.Name = "vaiTroListBox";
-            this.vaiTroListBox.Size = new System.Drawing.Size(146, 94);
+            this.vaiTroListBox.Size = new System.Drawing.Size(253, 94);
             this.vaiTroListBox.TabIndex = 13;
             this.vaiTroListBox.Visible = false;
             // 
@@ -265,21 +278,13 @@ namespace Band.ManageApp
             this.editVaiTroBtn.ErrorImage = null;
             this.editVaiTroBtn.Image = ((System.Drawing.Image)(resources.GetObject("editVaiTroBtn.Image")));
             this.editVaiTroBtn.ImageLocation = "";
-            this.editVaiTroBtn.Location = new System.Drawing.Point(254, 175);
+            this.editVaiTroBtn.Location = new System.Drawing.Point(240, 172);
             this.editVaiTroBtn.Name = "editVaiTroBtn";
-            this.editVaiTroBtn.Size = new System.Drawing.Size(18, 16);
+            this.editVaiTroBtn.Size = new System.Drawing.Size(24, 22);
             this.editVaiTroBtn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.editVaiTroBtn.TabIndex = 5;
             this.editVaiTroBtn.TabStop = false;
             this.editVaiTroBtn.Click += new System.EventHandler(this.editVaiTroBtn_Click);
-            // 
-            // dsVaiTroLbl
-            // 
-            this.dsVaiTroLbl.AutoSize = true;
-            this.dsVaiTroLbl.Location = new System.Drawing.Point(93, 175);
-            this.dsVaiTroLbl.Name = "dsVaiTroLbl";
-            this.dsVaiTroLbl.Size = new System.Drawing.Size(0, 15);
-            this.dsVaiTroLbl.TabIndex = 12;
             // 
             // label10
             // 
@@ -360,37 +365,18 @@ namespace Band.ManageApp
             // 
             // rightInfoPnl
             // 
-            this.rightInfoPnl.Controls.Add(this.extraInfoTxtBox);
-            this.rightInfoPnl.Controls.Add(this.label9);
             this.rightInfoPnl.Controls.Add(this.storyTxtBox);
             this.rightInfoPnl.Controls.Add(this.label8);
             this.rightInfoPnl.Location = new System.Drawing.Point(554, 3);
             this.rightInfoPnl.Name = "rightInfoPnl";
-            this.rightInfoPnl.Size = new System.Drawing.Size(197, 279);
+            this.rightInfoPnl.Size = new System.Drawing.Size(316, 297);
             this.rightInfoPnl.TabIndex = 2;
-            // 
-            // extraInfoTxtBox
-            // 
-            this.extraInfoTxtBox.Location = new System.Drawing.Point(12, 157);
-            this.extraInfoTxtBox.Name = "extraInfoTxtBox";
-            this.extraInfoTxtBox.Size = new System.Drawing.Size(171, 84);
-            this.extraInfoTxtBox.TabIndex = 3;
-            this.extraInfoTxtBox.Text = "";
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(12, 140);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(89, 15);
-            this.label9.TabIndex = 2;
-            this.label9.Text = "Thông tin thêm";
             // 
             // storyTxtBox
             // 
             this.storyTxtBox.Location = new System.Drawing.Point(12, 41);
             this.storyTxtBox.Name = "storyTxtBox";
-            this.storyTxtBox.Size = new System.Drawing.Size(171, 79);
+            this.storyTxtBox.Size = new System.Drawing.Size(294, 256);
             this.storyTxtBox.TabIndex = 1;
             this.storyTxtBox.Text = "";
             this.storyTxtBox.TextChanged += new System.EventHandler(this.storyTxtBox_TextChanged);
@@ -407,7 +393,7 @@ namespace Band.ManageApp
             // addMemberBtn
             // 
             this.addMemberBtn.Image = ((System.Drawing.Image)(resources.GetObject("addMemberBtn.Image")));
-            this.addMemberBtn.Location = new System.Drawing.Point(161, 4);
+            this.addMemberBtn.Location = new System.Drawing.Point(174, 5);
             this.addMemberBtn.Name = "addMemberBtn";
             this.addMemberBtn.Size = new System.Drawing.Size(27, 27);
             this.addMemberBtn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -423,13 +409,13 @@ namespace Band.ManageApp
             this.panel6.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel6.Location = new System.Drawing.Point(0, 0);
             this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(762, 34);
+            this.panel6.Size = new System.Drawing.Size(900, 42);
             this.panel6.TabIndex = 3;
             // 
             // deleteBtn
             // 
             this.deleteBtn.Image = ((System.Drawing.Image)(resources.GetObject("deleteBtn.Image")));
-            this.deleteBtn.Location = new System.Drawing.Point(194, 5);
+            this.deleteBtn.Location = new System.Drawing.Point(207, 3);
             this.deleteBtn.Name = "deleteBtn";
             this.deleteBtn.Size = new System.Drawing.Size(27, 29);
             this.deleteBtn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
@@ -440,7 +426,7 @@ namespace Band.ManageApp
             // thanhVienCombobox
             // 
             this.thanhVienCombobox.FormattingEnabled = true;
-            this.thanhVienCombobox.Location = new System.Drawing.Point(4, 8);
+            this.thanhVienCombobox.Location = new System.Drawing.Point(17, 6);
             this.thanhVienCombobox.Name = "thanhVienCombobox";
             this.thanhVienCombobox.Size = new System.Drawing.Size(151, 23);
             this.thanhVienCombobox.TabIndex = 4;
@@ -451,43 +437,54 @@ namespace Band.ManageApp
             this.infoPnl.Controls.Add(this.centerInfoPnl);
             this.infoPnl.Controls.Add(this.rightInfoPnl);
             this.infoPnl.Controls.Add(this.leftInfoPnl);
-            this.infoPnl.Location = new System.Drawing.Point(3, 225);
+            this.infoPnl.Location = new System.Drawing.Point(4, 287);
             this.infoPnl.Name = "infoPnl";
-            this.infoPnl.Size = new System.Drawing.Size(756, 285);
+            this.infoPnl.Size = new System.Drawing.Size(890, 308);
             this.infoPnl.TabIndex = 4;
             // 
             // saveBtn
             // 
-            this.saveBtn.Location = new System.Drawing.Point(336, 516);
+            this.saveBtn.Location = new System.Drawing.Point(207, 610);
             this.saveBtn.Name = "saveBtn";
-            this.saveBtn.Size = new System.Drawing.Size(179, 24);
+            this.saveBtn.Size = new System.Drawing.Size(147, 40);
             this.saveBtn.TabIndex = 5;
             this.saveBtn.Text = "Lưu";
             this.saveBtn.UseVisualStyleBackColor = true;
             this.saveBtn.Visible = false;
             this.saveBtn.Click += new System.EventHandler(this.saveBtn_Click);
             // 
+            // exitBtn
+            // 
+            this.exitBtn.Location = new System.Drawing.Point(517, 610);
+            this.exitBtn.Name = "exitBtn";
+            this.exitBtn.Size = new System.Drawing.Size(147, 40);
+            this.exitBtn.TabIndex = 6;
+            this.exitBtn.Text = "Thoát";
+            this.exitBtn.UseVisualStyleBackColor = true;
+            this.exitBtn.Visible = false;
+            this.exitBtn.Click += new System.EventHandler(this.exitBtn_Click);
+            // 
             // ThanhVienUserControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.exitBtn);
             this.Controls.Add(this.saveBtn);
             this.Controls.Add(this.infoPnl);
             this.Controls.Add(this.panel6);
             this.Controls.Add(this.imgPnl);
             this.Name = "ThanhVienUserControl";
-            this.Size = new System.Drawing.Size(762, 544);
-            this.Load += new System.EventHandler(this.ThanhVienUserControl_Load);
+            this.Size = new System.Drawing.Size(900, 670);
             this.imgPnl.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.editCoverImgBtn)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.editAvatarBtn)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.avatarImgBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.coverImgBox)).EndInit();
             this.leftInfoPnl.ResumeLayout(false);
             this.leftInfoPnl.PerformLayout();
             this.centerInfoPnl.ResumeLayout(false);
             this.centerInfoPnl.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.addVaiTroBtn)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.editVaiTroBtn)).EndInit();
             this.rightInfoPnl.ResumeLayout(false);
             this.rightInfoPnl.PerformLayout();
@@ -532,7 +529,6 @@ namespace Band.ManageApp
         private System.Windows.Forms.PictureBox editCoverImgBtn;
         private System.Windows.Forms.Panel panel6;
         private System.Windows.Forms.ComboBox thanhVienCombobox;
-        private System.Windows.Forms.Label dsVaiTroLbl;
         private System.Windows.Forms.Panel infoPnl;
         private System.Windows.Forms.CheckedListBox vaiTroListBox;
         private System.Windows.Forms.PictureBox editVaiTroBtn;
@@ -541,5 +537,9 @@ namespace Band.ManageApp
         private System.Windows.Forms.PictureBox deleteBtn;
         private System.Windows.Forms.Panel imgPnl;
         private System.Windows.Forms.Button saveBtn;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button exitBtn;
+        private System.Windows.Forms.ListBox dsVaiTroLbl;
+        private System.Windows.Forms.PictureBox addVaiTroBtn;
     }
 }

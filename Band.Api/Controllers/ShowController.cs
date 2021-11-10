@@ -48,7 +48,7 @@ namespace Band.Api.Controllers
             var result = await _manageShowService.AddingImages(request);
             if (result == 0)
                 return BadRequest();
-            return Ok(result);
+            return Ok(true);
         }
         [HttpPost]
         public async Task<IActionResult> Create(ShowCreateRequest request)
@@ -70,8 +70,6 @@ namespace Band.Api.Controllers
         public async Task<IActionResult> UpdateShowInfo(ShowInfoUpdateRequest request)
         {
             var result = await _manageShowService.UpdateShowInfo(request);
-            if (result == 0)
-                return BadRequest();
             return Ok(true);
         }
 
@@ -90,6 +88,22 @@ namespace Band.Api.Controllers
             if (result <=0)
                 return BadRequest();
             return Ok(true);
+        }
+
+        [HttpDelete("delete-images")]
+        public async Task<IActionResult> DeleteImages(List<int> request)
+        {
+            var result = await _manageShowService.DeleteImages(request);
+            if (result == 0)
+                return BadRequest();
+            return Ok(true);
+        }
+
+        [HttpPost("statiscal-paging")]
+        public async Task<IActionResult> GetStatiscalPaging(StatiscalRequest request)
+        {
+            var result = await _manageShowService.GetStatiscalData(request);
+            return Ok(result);
         }
 
 
@@ -113,7 +127,7 @@ namespace Band.Api.Controllers
         {
             var result = await _publicShowService.GetById(idShow);
             if (result == null)
-                return BadRequest("Không thể tìm thấy show");
+                return Ok("Không thể tìm thấy show");
             return Ok(result);
         }
 
@@ -121,6 +135,15 @@ namespace Band.Api.Controllers
         public async Task<IActionResult> Booking(BookingRequest request)
         {
             var result = await _publicShowService.Booking(request);
+            return Ok(result);
+        }
+
+        [HttpGet("hoadon")]
+        public async Task<IActionResult> GetHoaDonById(int idHoaDon)
+        {
+            var result = await _publicShowService.GetHoaDonById(idHoaDon);
+            if (result == null)
+                return BadRequest("Không thể tìm thấy show nào");
             return Ok(result);
         }
     }

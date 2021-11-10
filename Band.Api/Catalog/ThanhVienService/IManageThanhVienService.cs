@@ -12,6 +12,7 @@ namespace Band.Api.Catalog.ThanhVienService
         Task<int> Create(ThanhVienCreateRequest request);
 
         Task<int> Update(ThanhVienUpdateRequestWithoutVaiTro request);
+        Task<int> UpdatePosition(ThanhVienUpdatePositionRequest request);
 
         Task<int> Delete(int thanhVienId);
 

@@ -19,9 +19,9 @@ namespace Bank.Api.BankServices
         {
             _context = context;
         }
-        public async Task<int> GetBalance(GetBalanceRequest request)
+        public int GetBalance(GetBalanceRequest request)
         {
-            var acc = await _context.BankDbo.FindAsync(request.BankAccount);
+            var acc = _context.BankDbo.Find(request.BankAccount);
             if (acc == null) return (int)BankErrorCode.LOGIN_FAILED;
             if (acc.SoDu < request.Payment) return (int)BankErrorCode.BALANCE_NOT_ENOUGH;
             else return 1;
@@ -30,7 +30,7 @@ namespace Bank.Api.BankServices
         public async Task<int> CreateTransaction(PayingRequest request)
         {
             var srcAcc = await _context.BankDbo.FindAsync(request.SrcAccount);
-            if (srcAcc == null || !Decrypt(srcAcc.PasswordStored).Equals(request.Password)) return (int)BankErrorCode.LOGIN_FAILED;
+            if (srcAcc == null || !Decrypt(srcAcc.MatKhau).Equals(request.Password)) return (int)BankErrorCode.LOGIN_FAILED;
 
 
             var desAcc = await _context.BankDbo.FindAsync(request.DesAccount);
@@ -47,17 +47,6 @@ namespace Bank.Api.BankServices
                 }
             }
 
-        }
-        public string Encrypt(string plainText)
-        {
-            if (plainText == null) throw new ArgumentNullException("plainText");
-
-            //encrypt data
-            var data = Encoding.Unicode.GetBytes(plainText);
-            byte[] encrypted = ProtectedData.Protect(data, null, DataProtectionScope.CurrentUser);
-
-            //return as base64 string
-            return Convert.ToBase64String(encrypted);
         }
         public string Decrypt(string cipher)
         {

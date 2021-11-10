@@ -22,19 +22,23 @@ namespace Band.Data.Migrations
             modelBuilder.Entity("Band.Data.Entities.Bank", b =>
                 {
                     b.Property<string>("IdTaiKhoan")
-                        .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasMaxLength(15)
+                        .HasColumnType("varchar(15)");
 
-                    b.Property<string>("PasswordStored")
+                    b.Property<string>("MatKhau")
                         .IsRequired()
                         .HasMaxLength(330)
-                        .HasColumnType("varchar(330)")
-                        .HasColumnName("MatKhau");
+                        .HasColumnType("varchar(330)");
 
                     b.Property<decimal>("SoDu")
-                        .HasColumnType("numeric");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("numeric")
+                        .HasDefaultValue(0m);
 
                     b.HasKey("IdTaiKhoan");
+
+                    b.HasIndex("IdTaiKhoan")
+                        .IsUnique();
 
                     b.ToTable("NGANHANG");
                 });
@@ -124,7 +128,7 @@ namespace Band.Data.Migrations
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("ChiTiet")
-                        .HasColumnType("text");
+                        .HasColumnType("ntext");
 
                     b.Property<string>("TenLoai")
                         .IsRequired()
@@ -138,15 +142,19 @@ namespace Band.Data.Migrations
 
             modelBuilder.Entity("Band.Data.Entities.NhomNhac", b =>
                 {
-                    b.Property<string>("TenNhom")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("IdNhom")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:IdentityIncrement", 1)
+                        .HasAnnotation("SqlServer:IdentitySeed", 1)
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("AppleMusic")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
 
                     b.Property<string>("ChiTiet")
-                        .HasColumnType("text");
+                        .HasColumnType("ntext");
 
                     b.Property<string>("CongTy")
                         .IsRequired()
@@ -156,15 +164,24 @@ namespace Band.Data.Migrations
                     b.Property<DateTime>("DebutDate")
                         .HasColumnType("date");
 
+                    b.Property<byte[]>("Logo")
+                        .IsRequired()
+                        .HasColumnType("image");
+
                     b.Property<string>("Spotify")
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("TenNhom")
+                        .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Youtube")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
 
-                    b.HasKey("TenNhom");
+                    b.HasKey("IdNhom");
 
                     b.ToTable("NHOMNHAC");
                 });
@@ -258,8 +275,8 @@ namespace Band.Data.Migrations
                         .HasColumnType("date");
 
                     b.Property<string>("Instagram")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.Property<DateTime>("NgaySinh")
                         .HasColumnType("date");
@@ -280,11 +297,11 @@ namespace Band.Data.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("TieuSu")
-                        .HasColumnType("text");
+                        .HasColumnType("ntext");
 
                     b.Property<string>("Twitter")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
                     b.HasKey("IdThanhVien");
 
@@ -343,27 +360,16 @@ namespace Band.Data.Migrations
 
             modelBuilder.Entity("Band.Data.Entities.Ve", b =>
                 {
-                    b.Property<int>("IdVe")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:IdentityIncrement", 1)
-                        .HasAnnotation("SqlServer:IdentitySeed", 1)
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("MaSoVe")
+                        .HasMaxLength(25)
+                        .HasColumnType("varchar(25)");
 
                     b.Property<int>("IDHoaDon")
                         .HasColumnType("int");
 
-                    b.Property<string>("MaSoVe")
-                        .IsRequired()
-                        .HasMaxLength(30)
-                        .HasColumnType("varchar(30)");
-
-                    b.HasKey("IdVe");
+                    b.HasKey("MaSoVe");
 
                     b.HasIndex("IDHoaDon");
-
-                    b.HasIndex("MaSoVe")
-                        .IsUnique();
 
                     b.ToTable("VE");
                 });

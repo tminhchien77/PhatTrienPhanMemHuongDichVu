@@ -12,7 +12,7 @@ namespace Band.Data.Configurations
             builder.HasKey(x => x.IdLoaiVe);
             builder.Property(x => x.IdLoaiVe).UseIdentityColumn();
             builder.Property(x => x.TenLoai).HasMaxLength(50).IsRequired();
-            builder.Property(x => x.ChiTiet).HasColumnType("text").IsRequired(false);
+            builder.Property(x => x.ChiTiet).HasColumnType("ntext").IsRequired(false);
 
         }
     }

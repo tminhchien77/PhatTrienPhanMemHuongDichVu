@@ -41,6 +41,7 @@ namespace Band.Api.Catalog.ThanhVienService
         public async Task<GetByIdThanhVienViewModel> GetById(int idThanhVien)
         {
             var thanhVien = await _context.ThanhVienDbo.FindAsync(idThanhVien);
+            if (thanhVien == null) return null;
             var avatarsFromDb = await(from t in _context.ThanhVienDbo
                                      join ta in _context.ThanhVienVsHinhAnhDbo on t.IdThanhVien equals ta.IdThanhVien
                                      join a in _context.HinhAnhDbo on ta.IdAnh equals a.IdAnh

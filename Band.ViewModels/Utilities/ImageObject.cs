@@ -18,6 +18,7 @@ namespace Band.ViewModels.Utilities
         {
             this.Anh = image;
         }
+
         public byte[] CovertToByteArray()
         {
             var handler = new ImageHandler();

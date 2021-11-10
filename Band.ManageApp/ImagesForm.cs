@@ -23,9 +23,10 @@ namespace Band.ManageApp
         private int numOfImages;
         private ThanhVienApiClient _thanhVienApiClient;
         private ShowApiClient _showApiClient;
-        /*public delegate void SendImgList(ref NewListOfImage imgList);*/
+        private BandApiClient _bandApiClient;
+        public delegate void SendImgList(List<Image> imgList);
         public delegate void SendInfo(ImageType imgeType, int id=-1);
-        /*public SendImgList Sender;*/
+        public SendImgList SenderImgList;
         public SendInfo SenderInfo;
         public ImagesForm()
         {
@@ -34,9 +35,10 @@ namespace Band.ManageApp
             _images = new NewListOfImageObject();
             /*Sender = new SendImgList(GetImgList);*/
             SenderInfo = new SendInfo(GetInfo);
+            SenderImgList = new SendImgList(GetImgList);
             _images.Change += delegate (object sender, EventArgs arg)
             {
-                if (_images.Count > 0) loadImages();
+                if (_images.Count >= 0) loadImages();
             };
            
 
@@ -45,20 +47,27 @@ namespace Band.ManageApp
             imgsContainer.VerticalScroll.Maximum = 0;
             imgsContainer.AutoScroll = true;
         }
-        /*private void GetImgList(ref NewListOfImage imgList)
+        private void GetImgList(List<Image> imgList)
         {
-            foreach(var x in imgList)
+            foreach (var x in imgList)
             {
-                _images.Add(x);
+                _images.Add(new ImageObject(x));
             }
-        }*/
+        }
         private void GetInfo(ImageType imageType,int id= -1)
         {
             _idObject = id;
             _imgType = imageType;
 
-            
-            if (imageType == ImageType.IMG_SHOW)
+            if (imageType == ImageType.IMG_BAND)
+            {
+                _bandApiClient = new BandApiClient();
+                foreach (var x in _bandApiClient.GetAllImg())
+                {
+                    _images.Add(new ImageObject(x));
+                }
+            }
+            else if (imageType == ImageType.IMG_SHOW)
             {
                 _showApiClient = new ShowApiClient();
                 foreach (var x in _showApiClient.GetAllImgById(id))
@@ -88,6 +97,11 @@ namespace Band.ManageApp
         }
         private void addImgsBtn_Click(object sender, EventArgs e)
         {
+            if (deleteBtn.Visible == true)
+            {
+                MessageBox.Show("Chưa lưu thay đổi!");
+                return;
+            }
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.Multiselect = true;
             openFileDialog.Filter = "JPG|*.jpg|PNG|*.png|JPEG|*.jpeg|All files|*.*";
@@ -120,6 +134,11 @@ namespace Band.ManageApp
 
         private void removeImgsBtn_Click(object sender, EventArgs e)
         {
+            if (saveBtn.Visible == true)
+            {
+                MessageBox.Show("Chưa lưu thay đổi!");
+                return;
+            }
             foreach (Control p in imgsContainer.Controls)
                 if (p is Panel)
                     foreach (Control c in p.Controls)
@@ -161,7 +180,19 @@ namespace Band.ManageApp
             {
                 byteImgList.Add(_images[i].CovertToByteArray());
             }
-            if (_idObject!=-1 && _imgType!=ImageType.IMG_SHOW)
+            if (_idObject != -1 && _imgType == ImageType.IMG_BAND)
+            {
+                if (_bandApiClient.AddingImages(byteImgList))
+                {
+                    MessageBox.Show("Thành công!");
+                    _images.Clear();
+                    foreach (var x in _bandApiClient.GetAllImg())
+                    {
+                        _images.Add(new ImageObject(x));
+                    }
+                }
+            }
+            else if (_idObject!=-1 && _imgType!=ImageType.IMG_SHOW)
             {
                 HinhAnhThanhVienRequest request;
                 if (_imgType == ImageType.AVATAR_MEM)
@@ -182,7 +213,26 @@ namespace Band.ManageApp
                         IdLoai = (int)ImageType.COVER_MEM
                     };
                 }
-                if (_thanhVienApiClient.AddingImages(request)) MessageBox.Show("Thành công!");
+                if (_thanhVienApiClient.AddingImages(request))
+                {
+                    MessageBox.Show("Thành công!");
+                    _images.Clear();
+                    if (_imgType == ImageType.AVATAR_MEM)
+                    {
+                        foreach (var x in _thanhVienApiClient.GetAllAvatarById(_idObject))
+                        {
+                            _images.Add(new ImageObject(x));
+                        }
+                    }
+                    if (_imgType == ImageType.COVER_MEM)
+                    {
+                        foreach (var x in _thanhVienApiClient.GetAllCoverById(_idObject))
+                        {
+                            _images.Add(new ImageObject(x));
+                        }
+                    }
+                } 
+                    
                 else MessageBox.Show("Thất bại!");
             }
             else if (_idObject != -1 && _imgType == ImageType.IMG_SHOW)
@@ -193,7 +243,17 @@ namespace Band.ManageApp
                     IdShow = _idObject,
                     IdLoai = (int)ImageType.IMG_SHOW
                 };
-                if (_showApiClient.AddingImages(request)) _ = MessageBox.Show("Thành công!");
+                if (_showApiClient.AddingImages(request))
+                {
+                    MessageBox.Show("Thành công!");
+                    _images.Clear();
+
+                    foreach (var x in _showApiClient.GetAllImgById(_idObject))
+                    {
+                        _images.Add(new ImageObject(x));
+                    }
+                }
+                    
                 else MessageBox.Show("Thất bại!");
             }
             saveBtn.Visible = false;
@@ -201,6 +261,11 @@ namespace Band.ManageApp
 
         private void ImagesForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            if (_images.Count == 0 && _idObject!=-1)
+            {
+                MessageBox.Show("Hình ảnh không được trống!");
+                e.Cancel = true;
+            }
             if (saveBtn.Visible)
             {
                 if (MessageBox.Show("Thoát và không lưu?",
@@ -214,26 +279,38 @@ namespace Band.ManageApp
             int i = 0;
             var listId = new List<int>();
             var listimg = new List<int>();
+            
             foreach (var p in imgsContainer.Controls.OfType<Panel>())
             {
                 if (((CheckBox)p.Controls.OfType<CheckBox>().FirstOrDefault()).Checked)
                 {
                     var img = ((PictureBox)p.Controls.OfType<PictureBox>().FirstOrDefault());
-                    listId.Add(_images[i].IdAnh.Value);
+                    if (_idObject != -1)
+                        listId.Add(_images[i].IdAnh.Value);
                     listimg.Add(i); 
                 }
                 i++;
             }
-            if(_idObject!=-1)
+            if (_idObject != -1 && _imgType == ImageType.IMG_BAND)
+            {
+                if (_bandApiClient == null)
+                    _bandApiClient = new BandApiClient();
+                _bandApiClient.DeleteImages(listId);
+            }
+            else if (_idObject!=-1 && _imgType!=ImageType.IMG_SHOW)
             {
                 if (_thanhVienApiClient == null)
                     _thanhVienApiClient = new ThanhVienApiClient();
                 _thanhVienApiClient.DeleteImages(listId);
             }
-            foreach(var x in listimg)
+            else if (_idObject != -1 && _imgType == ImageType.IMG_SHOW)
             {
-                _images.RemoveAt(x);
+                if (_showApiClient == null)
+                    _showApiClient = new ShowApiClient();
+                _showApiClient.DeleteImages(listId);
             }
+            _images.RemoveRange(listimg[0], listimg.Count);
+
             
             deleteBtn.Visible = false;
             selectAllCheckBox.Visible = false;

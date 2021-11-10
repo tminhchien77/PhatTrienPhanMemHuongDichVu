@@ -19,9 +19,9 @@ namespace Band.Data.Configurations
             builder.Property(x => x.NgaySinh).HasColumnType("date").IsRequired();
             builder.Property(x => x.QuocTich).HasMaxLength(50).IsRequired();
             builder.Property(x => x.DebutDate).HasColumnType("date").IsRequired();
-            builder.Property(x => x.TieuSu).HasColumnType("text");
-            builder.Property(x => x.Instagram).HasMaxLength(100);
-            builder.Property(x => x.Twitter).HasMaxLength(100);
+            builder.Property(x => x.TieuSu).HasColumnType("ntext");
+            builder.Property(x => x.Instagram).HasMaxLength(500);
+            builder.Property(x => x.Twitter).HasMaxLength(500);
         }
     }
 }

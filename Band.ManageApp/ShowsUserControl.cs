@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -75,6 +76,7 @@ namespace Band.ManageApp
             showPictureBox.Controls.Add(editCoverImgBtn);
             editCoverImgBtn.Location = new Point(showPictureBox.Width - editCoverImgBtn.Width - 10, showPictureBox.Height - editCoverImgBtn.Height - 10);
             editCoverImgBtn.BackColor = Color.FromArgb(125, Color.White);
+            performDatebox.MinDate = DateTime.Now;
 
             var tmp = (ShowGetAllViewModel)showsComboBox.SelectedValue;
             if (tmp == null)
@@ -96,18 +98,6 @@ namespace Band.ManageApp
         }
         private void loadDataGridView()
         {
-            /*nameTxtBox.DataBindings.Add(new Binding("Text", thanhVienCombobox.DataSource, "TenKhaiSinh"));*/
-            /*var colTicketType = new DataGridViewComboBoxColumn
-            {
-                DataSource = loadLoaiVe(),
-                HeaderText = "Loại vé",
-                *//*                DataPropertyName = "InsurDetailz",
-                *//*
-                DisplayMember = "TenLoai",
-                ValueMember = "IdLoaiVe",
-            };
-            var colTicketDetails = new DataGridViewComboBoxColumn
-            ticketsTbl.Columns.Add(colTicketType);*/
             tiketTypeCol.DataSource = _dsLoaiVe;
             tiketTypeCol.DisplayMember = "TenLoai";
             tiketTypeCol.ValueMember = "IdLoaiVe";
@@ -132,7 +122,9 @@ namespace Band.ManageApp
             if (isContinue)
             {
                 _imageList = new List<Image>();
-
+                var resourcePath = Path.Combine(Application.StartupPath, @"..\Resources\");
+                showPictureBox.Image = new Bitmap(Path.GetFullPath(resourcePath + "image.png"));
+                showPictureBox.SizeMode = PictureBoxSizeMode.Zoom;
                 nameTxtBox.Text = "";
                 nameTxtBox.ReadOnly=false;
                 locationTxtBox.Text = "";
@@ -143,12 +135,26 @@ namespace Band.ManageApp
                 saleTimeBox.Value = DateTime.Now;
                 detailTicketTxtBox.Text = "";
                 saveBtn.Visible = true;
+                exitBtn.Show();
                 _actionType = ActionType.CREATE;
                 deleteShowBtn.Hide();
                 editShowInfoBtn.Hide();
                 editTicketInfoBtn.Hide();
                 ticketsTbl.ReadOnly = false;
-                showsComboBox.Hide();
+                foreach (DataGridViewRow row in ticketsTbl.Rows)
+                {
+                    for (int i = 0; i < row.Cells.Count; i++)
+                    {
+                        row.Cells[i].Value = null;
+                    }
+                }
+                if (showsComboBox.FindStringExact("--Đang thêm--") == -1)
+                {
+                    showsComboBox.SelectedItem = null;
+                    showsComboBox.SelectedText = "--Đang thêm--";
+                }
+                showsComboBox.Enabled = false;
+
             }
         }
 
@@ -173,6 +179,7 @@ namespace Band.ManageApp
                     detailTicketTxtBox.Text = detail;
                     /*ticketsTbl.Rows[e.RowIndex].Cells[1].Value = detail;*/
                 }
+                ticketsTbl.Rows[e.RowIndex].Cells[3].Value = "Xoá";
             }
             ticketsTbl.Invalidate();
             /*var newValue = ticketsTbl.CurrentCell.EditedFormattedValue;
@@ -207,10 +214,15 @@ namespace Band.ManageApp
             if (_actionType != ActionType.CREATE)
                 imagesForm.SenderInfo(ImageType.IMG_SHOW, showGetAllVm.IdShow);
             else
+            {
                 imagesForm.SenderInfo(ImageType.IMG_SHOW);
+                imagesForm.SenderImgList(_imageList);
+            }
+                
 
             imagesForm.ShowDialog();
-            image = imagesForm._images.FirstOrDefault().Anh;
+            if (imagesForm._images.Count > 0)
+                image = imagesForm._images.FirstOrDefault().Anh;
             if (_actionType == ActionType.CREATE && _imageList != null)
             {
                 _imageList.Clear();
@@ -305,8 +317,15 @@ namespace Band.ManageApp
 
         private void editShowInfoBtn_Click(object sender, EventArgs e)
         {
+            editShowInfo();
+            
+        }
+
+        private void editShowInfo()
+        {
             bool isContinue = true;
-            if (_actionType != ActionType.READ && saveShowInfoBtn.Visible==false)
+            if (_actionType == ActionType.CREATE) return;// Đang thêm mới
+            if (_actionType != ActionType.READ && saveShowInfoBtn.Visible == false)
             {
                 isContinue = false;
                 if (MessageBox.Show("Thoát và không lưu?",
@@ -324,7 +343,6 @@ namespace Band.ManageApp
                 _actionType = ActionType.UPDATE;
                 saveShowInfoBtn.Show();
             }
-            
         }
 
         private void bindingShowInfo(ShowViewModel show)
@@ -376,9 +394,9 @@ namespace Band.ManageApp
             if (_showsApiClient.UpdateShowInfor(showInfoUpdateRequest))
             {
                 MessageBox.Show("Thành công!");
+                Read();
             }
             else MessageBox.Show("Thất bại!");
-            saveTiketInfoBtn.Visible = false;
         }
 
 /*        private void saveBtn_Click_1(object sender, EventArgs e)
@@ -531,17 +549,28 @@ namespace Band.ManageApp
                 locationTxtBox.Focus();
                 return;
             }
+            if (saleDateBox.Value >= performDatebox.Value)
+            {
+                MessageBox.Show("Thời gian mở bán vé phải nhỏ hơn ngày biểu diễn!");
+                return;
+            }
+
 
             //Kiểm tra danh sách loại vé
             var dsChiTietVe = new List<ChiTietVeViewModel>();
-            getDsLoaiVeFromDGV(ref dsChiTietVe);
-            if (dsChiTietVe.Count <= 0)
+            int errorNum = getDsLoaiVeFromDGV(ref dsChiTietVe);
+            if (errorNum == -1) //Thiếu thông tin loại vé
             {
                 MessageBox.Show("Vui lòng điền đầy đủ thông tin loại vé!");
                 return;
             }
+            else if (errorNum == -2)//Trùng loại vé
+            {
+                MessageBox.Show("Danh sách các loại vé không được trùng nhau!");
+                return;
+            }
 
-            // Tạp request
+            // Tạo request
             var showCreateRequest = new ShowCreateRequest()
             {
                 DiaDiem = locationTxtBox.Text,
@@ -568,17 +597,23 @@ namespace Band.ManageApp
             loadDataGridView();
             loadDsShow();
             saveBtn.Visible = false;
+            saveBtn.Hide();
+            exitBtn.Hide();
+            showsComboBox.Enabled = true;
+            showPictureBox.SizeMode = PictureBoxSizeMode.StretchImage;
             showsComboBox.Show();
             deleteShowBtn.Show();
             editShowInfoBtn.Show();
             editTicketInfoBtn.Show();
-            nameTxtBox.ReadOnly = true;
-            locationTxtBox.ReadOnly = true;
+            saveShowInfoBtn.Hide();
+            saveTiketInfoBtn.Hide();
+            /*nameTxtBox.ReadOnly = true;*/
+            /*locationTxtBox.ReadOnly = true;*/
             ticketsTbl.ReadOnly = true;
             _actionType = ActionType.READ;
         }
 
-        private void getDsLoaiVeFromDGV(ref List<ChiTietVeViewModel> dsChiTietVe)
+        private int getDsLoaiVeFromDGV(ref List<ChiTietVeViewModel> dsChiTietVe)
         {
             var result = new List<ChiTietVeViewModel>();
             foreach (DataGridViewRow row in ticketsTbl.Rows)
@@ -605,10 +640,21 @@ namespace Band.ManageApp
                 else
                 {
                     
-                    return;
+                    return -1;
+                }
+            }
+            for(int i=0; i < result.Count-1; i++)
+            {
+                for(int j=i+1; j<result.Count; j++)
+                {
+                    if (result[i].IdLoaiVe == result[j].IdLoaiVe)
+                    {
+                        return -2;
+                    }
                 }
             }
             dsChiTietVe = result;
+            return 1;
         }
 
         private void ticketsTbl_CellEndEdit(object sender, DataGridViewCellEventArgs e)
@@ -616,7 +662,7 @@ namespace Band.ManageApp
             if (e.ColumnIndex == 1)
             {
                 double price = Convert.ToDouble(ticketsTbl.Rows[e.RowIndex].Cells[1].Value);
-                ticketsTbl.Columns[1].DefaultCellStyle.Format = "c2";
+                ticketsTbl.Columns[1].DefaultCellStyle.Format = "c0";
                 ticketsTbl.Columns[1].DefaultCellStyle.FormatProvider = CultureInfo.GetCultureInfo("vi-VN");
                 ticketsTbl.Rows[e.RowIndex].Cells[1].Value = price;
             }
@@ -625,12 +671,17 @@ namespace Band.ManageApp
         private void saveTiketInfoBtn_Click(object sender, EventArgs e)
         {
             var dsChiTietVe = new List<ChiTietVeViewModel>();
-            getDsLoaiVeFromDGV(ref dsChiTietVe);
-            if (dsChiTietVe.Count <= 0)
+            int errorNum= getDsLoaiVeFromDGV(ref dsChiTietVe);
+            if (errorNum == -1) //Thiếu thông tin loại vé
             {
                 MessageBox.Show("Vui lòng điền đầy đủ thông tin loại vé!");
                 return;
             }
+            else if(errorNum==-2)//Trùng loại vé
+            {
+                MessageBox.Show("Danh sách các loại vé không được trùng nhau!");
+                return;
+            }    
             else
             {
                 ShowGetAllViewModel tmp = (ShowGetAllViewModel)showsComboBox.SelectedValue;
@@ -660,13 +711,32 @@ namespace Band.ManageApp
         {
             if (e.ColumnIndex == 3)
             {
-                if(MessageBox.Show("Bạn chắc chắn muốn xoá?","Thông báo",MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (ticketsTbl.ReadOnly == true) return;
+                foreach (DataGridViewRow row in ticketsTbl.Rows)
                 {
-                    for(int i=0; i<3; i++)
+                    int countNull = 0;
+                    for (int i = 0; i < row.Cells.Count - 1; i++)
                     {
-                        ticketsTbl.Rows[e.RowIndex].Cells[i].Value = null;
+                        if (checkNull(row.Cells[i].Value))
+                        {
+
+                            countNull++;
+                        }
+                    }
+                    if (countNull == 3) return;
+                    else
+                    {
+
+                        if (MessageBox.Show("Bạn chắc chắn muốn xoá?", "Thông báo", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                        {
+                            for (int i = 0; i < 3; i++)
+                            {
+                                ticketsTbl.Rows[e.RowIndex].Cells[i].Value = null;
+                            }
+                        }
                     }
                 }
+                
             }
         }
 
@@ -678,7 +748,33 @@ namespace Band.ManageApp
             else
             {
                 MessageBox.Show("Thành công!");
+                Read();
             }
+        }
+
+        private void locationTxtBox_TextChanged(object sender, EventArgs e)
+        {
+            if (!locationTxtBox.Focused) return;
+            if (!saveShowInfoBtn.Visible)
+            {
+                editShowInfo();
+            }
+        }
+
+        private void nameTxtBox_TextChanged(object sender, EventArgs e)
+        {
+            if (!nameTxtBox.Focused) return;
+            if (!saveShowInfoBtn.Visible)
+            {
+                editShowInfo();
+            }
+        }
+
+        private void exitBtn_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Thoát và không lưu?",
+                      "Chưa lưu thay đổi",
+                       MessageBoxButtons.YesNo) == DialogResult.Yes) Read();
         }
 
         /*private ChiTietVeViewModel checkForCorrectnessChiTietVe(object id, object price, object quantity)

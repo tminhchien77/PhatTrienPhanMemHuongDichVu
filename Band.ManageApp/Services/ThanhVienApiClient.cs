@@ -11,6 +11,8 @@ using Band.ViewModels.Catalog.VaiTro;
 using System.Drawing;
 using Band.ViewModels.Utilities;
 using Band.ViewModels.Catalog.Anh;
+using System.IO;
+using System.Windows.Forms;
 
 namespace Band.ManageApp.Services
 {
@@ -37,7 +39,17 @@ namespace Band.ManageApp.Services
             /*client.BaseAddress = "https://localhost:44315";*/
 /*            Uri uri = new Uri("https://localhost:44315/api/thanhvien/");
 */            client.Headers[HttpRequestHeader.ContentType] = "application/json";
-            var response = client.UploadString(uri, "POST", json);
+            var response = "";
+            try
+            {
+                response = client.UploadString(uri, "POST", json);
+
+            }
+            catch (WebException e)
+            {
+                string pageContent = new StreamReader(e.Response.GetResponseStream()).ReadToEnd().ToString();
+                MessageBox.Show(pageContent);
+            }
             if (response == "true") return true;
             return false;
         }
@@ -125,5 +137,14 @@ namespace Band.ManageApp.Services
             return false;
         }
 
+        public bool UpdatePosition(ThanhVienUpdatePositionRequest request)
+        {
+            var json = JsonConvert.SerializeObject(request);
+            WebClient client = new WebClient();
+            client.Headers[HttpRequestHeader.ContentType] = "application/json";
+            var response = client.UploadString(uri+ "update-position", "POST", json);
+            if (response == "true") return true;
+            return false;
+        }
     }
 }

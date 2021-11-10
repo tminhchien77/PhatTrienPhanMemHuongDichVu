@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Band.Data\Band.Data.csproj" />
     <ProjectReference Include="..\Band.ViewModels\Band.ViewModels.csproj" />
   </ItemGroup>

@@ -28,6 +28,7 @@ namespace Band.ManageApp
         private ThanhVienApiClient _thanhVienApiClient;
         public static ThanhVienUserControl _instance;
         private List<Image> _avatarList;
+        private List<VaiTroViewModel> _vaiTroList;
         private List<Image> _coverList;
         private Image _avatar;
         private Image _cover;
@@ -102,13 +103,19 @@ namespace Band.ManageApp
             };
             CoverChanged += delegate (object sender, EventArgs arg)
             {
+                coverImgBox.SizeMode = PictureBoxSizeMode.StretchImage;
                 coverImgBox.Image = cover;
             };
-
-            loadDsThanhVien();
+            Read();
+            var tmp = (ThanhVienGetAllViewModel)thanhVienCombobox.SelectedValue;
+            if (tmp == null)
+            {
+                MessageBox.Show("Danh sách thành viên rỗng! Vui lòng thêm thành viên mới!");
+                Create();
+            }
             /*loadDsVaiTro();*/
-/*            bindingData();
-*/            /*saveBtn.Visible = false;*/
+            /*            bindingData();
+            */            /*saveBtn.Visible = false;*/
             /*editAvatarBtn.Image= SetImageOpacity(editAvatarBtn.Image, 0.2f);
             editCoverImgBtn.Image = SetImageOpacity(editCoverImgBtn.Image, 0.2f);
             editVaiTroBtn.Image = SetImageOpacity(editVaiTroBtn.Image, 0.2f);*/
@@ -122,37 +129,124 @@ namespace Band.ManageApp
             editCoverImgBtn.BackColor = Color.FromArgb(125, Color.White);
         }
 
-        private void ThanhVienUserControl_Load(object sender, EventArgs e)
+        private void Read()
         {
-
+            loadDsThanhVien();
+            thanhVienCombobox.Enabled = true;
+            addVaiTroBtn.Hide();
+            editVaiTroBtn.Show();
+            saveBtn.Hide();
+            exitBtn.Hide();
+            dsVaiTroLbl.Show();
         }
 
-        private void addMemberBtn_Click(object sender, EventArgs e)
+        private void Create()
         {
             _avatarList = new NewListOfImage();
             _coverList = new NewListOfImage();
-            avatarImgBox.Image = new Bitmap("C:\\Users\\mchie\\Desktop\\PhatTrienPhanMemHuongDichVu\\Band.ManageApp\\Resources\\user.png");
-            coverImgBox.Image = new Bitmap("C:\\Users\\mchie\\Desktop\\PhatTrienPhanMemHuongDichVu\\Band.ManageApp\\Resources\\image.png");
-            nameTxtBox.Text="";
+            var resourcePath=Path.Combine(Application.StartupPath, @"..\Resources\");
+            /*MessageBox.Show(Path.GetFullPath(Path.Combine(Application.StartupPath, @"..\Resources\user.png")));*/
+            avatarImgBox.Image = new Bitmap(Path.GetFullPath(resourcePath+"user.png"));
+            coverImgBox.Image = new Bitmap(Path.GetFullPath(resourcePath + "image.png"));
+            coverImgBox.SizeMode = PictureBoxSizeMode.Zoom;
+            nameTxtBox.Text = "";
             nationTxtBox.Text = "";
             stageNameTxtBox.Text = "";
             instaTxtBox.Text = "";
             twitterTxtBox.Text = "";
             storyTxtBox.Text = "";
-            extraInfoTxtBox.Text = "";
-            thanhVienCombobox.Visible = false;
             dsVaiTroLbl.Visible = false;
+
+            /*thanhVienCombobox.DataSource*/
+            if (thanhVienCombobox.FindStringExact("--Đang thêm--")==-1)
+            {
+                thanhVienCombobox.SelectedItem = null;
+                thanhVienCombobox.SelectedText = "--Đang thêm--";
+            }
             
+            thanhVienCombobox.Enabled = false;
+            vaiTroListBox.Show();
             loadDsVaiTro();
-            /*saveAllBtn.Visible = true;*/
+            saveBtn.Visible = true;
+            exitBtn.Visible = true;
+            editVaiTroBtn.Hide();
+            addVaiTroBtn.Show();
             _actionType = ActionType.CREATE;
+        }
+
+        private void addMemberBtn_Click(object sender, EventArgs e)
+        {
+                
+            Create();
         }
 
         private void saveBtn_Click(object sender, EventArgs e)
         {
             _thanhVienApiClient = new ThanhVienApiClient();
-            if (_actionType == ActionType.UPDATE)
+            if (_actionType == ActionType.UPDATE_POSITION)
             {
+                
+                //Kiểm tra và thêm vai trò
+                if (vaiTroListBox.CheckedItems == null || vaiTroListBox.CheckedItems.Count == 0)
+                {
+                    MessageBox.Show("Vui lòng thêm vai trò thành viên!");
+                    return;
+                }
+
+                List<int> dsIdVaiTro = new List<int>();
+                int index = 0;
+                var dsVaiTroMoi = new List<string>();
+
+                foreach (VaiTroViewModel x in vaiTroListBox.CheckedItems)
+                {
+                    if (!_vaiTroList.Contains(x))
+                        dsVaiTroMoi.Add(x.TenVaiTro);
+                    else
+                        dsIdVaiTro.Add(x.IdVaiTro);
+                    index++;
+                }
+
+                //Tạo request
+                ThanhVienGetAllViewModel tmp = thanhVienCombobox.SelectedValue as ThanhVienGetAllViewModel;
+                var request = new ThanhVienUpdatePositionRequest()
+                {
+                    IdThanhVien = tmp.IdThanhVien,
+                    DsIdVaiTro = dsIdVaiTro,
+                    DsVaiTroMoi = dsVaiTroMoi
+                };
+                var response = _thanhVienApiClient.UpdatePosition(request);
+                if (response)
+                {
+                    MessageBox.Show("Thành công!");
+                    Read();
+                    thanhVienCombobox.SelectedIndex = thanhVienCombobox.FindStringExact(tmp.NgheDanh);
+                }
+                else
+                    MessageBox.Show("Thất bại!");
+
+            }
+            else if (_actionType == ActionType.UPDATE)
+            {
+                editVaiTroBtn.Hide();
+                //Kiểm tra thông tin và thêm thông tin thành viên
+                if (checkNull(nameTxtBox.Text))
+                {
+                    MessageBox.Show("Họ và tên không được rỗng!");
+                    nameTxtBox.Focus();
+                    return;
+                }
+                else if (checkNull(nationTxtBox.Text))
+                {
+                    MessageBox.Show("Quốc tịch không được rỗng!");
+                    nationTxtBox.Focus();
+                    return;
+                }
+                else if (checkNull(stageNameTxtBox.Text))
+                {
+                    MessageBox.Show("Nghệ danh không được rỗng!");
+                    stageNameTxtBox.Focus();
+                    return;
+                }
                 ThanhVienGetAllViewModel tmp = thanhVienCombobox.SelectedValue as ThanhVienGetAllViewModel;
                 var request = new ThanhVienUpdateRequestWithoutVaiTro()
                 {
@@ -170,79 +264,115 @@ namespace Band.ManageApp
                 if (response)
                 {
                     MessageBox.Show("Thành công!");
-                    loadDsThanhVien();
+                    Read();
                     thanhVienCombobox.SelectedIndex = thanhVienCombobox.FindStringExact(request.NgheDanh);
 /*                    _ = _thanhVienApiClient.GetById(tmp.IdThanhVien);
-*/                }
+*/              }
                 else
                     MessageBox.Show("Thất bại!");
             }
             else if(_actionType == ActionType.CREATE)
             {
-                if (avatar != null )
+                //Kiểm tra và thêm avatar
+                if (_avatarList.Count <= 0)
                 {
-                    List<byte[]> byteAvatarList = new List<byte[]>();
-                    foreach (Image img in _avatarList)
+                    MessageBox.Show("Vui lòng thêm hình ảnh thành viên!");
+                    return;
+                }
+                List<byte[]> byteAvatarList = new List<byte[]>();
+                foreach (Image img in _avatarList)
+                {
+                    byteAvatarList.Add(imageHandler.ImageToByteArray(img));
+                }
+
+                //Kiểm tra và thêm cover
+                if (_coverList.Count <= 0)
+                {
+                    MessageBox.Show("Vui lòng thêm hình ảnh thành viên!");
+                    return;
+                }
+                List<byte[]> byteCoverList = new List<byte[]>();
+                foreach (Image img in _coverList)
+                {
+                    byteCoverList.Add(imageHandler.ImageToByteArray(img));
+                }
+
+                //Kiểm tra thông tin và thêm thông tin thành viên
+                if (checkNull(nameTxtBox.Text))
+                {
+                    MessageBox.Show("Họ và tên không được rỗng!");
+                    nameTxtBox.Focus();
+                    return;
+                }
+                else if (checkNull(nationTxtBox.Text))
+                {
+                    MessageBox.Show("Quốc tịch không được rỗng!");
+                    nationTxtBox.Focus();
+                    return;
+                }
+                else if (checkNull(stageNameTxtBox.Text))
+                {
+                    MessageBox.Show("Nghệ danh không được rỗng!");
+                    stageNameTxtBox.Focus();
+                    return;
+                }
+
+
+                //Kiểm tra và thêm vai trò
+                if (vaiTroListBox.CheckedItems == null || vaiTroListBox.CheckedItems.Count == 0)
+                {
+                    MessageBox.Show("Vui lòng thêm vai trò thành viên!");
+                    return;
+                }
+
+                List<int> dsIdVaiTro = new List<int>();
+                int index = 0;
+                var dsTenVaiTro = new List<String>();
+                foreach (var x in _vaiTroList)
+                {
+                    dsTenVaiTro.Add(x.TenVaiTro);
+                }
+                var dsVaiTroMoi = new List<string>();
+                if (_vaiTroList.Count > 0)
+                {
+                    foreach (VaiTroViewModel x in vaiTroListBox.CheckedItems)
                     {
-                        byteAvatarList.Add(imageHandler.ImageToByteArray(img));
-                    }
-                    if (cover != null)
-                    {
-                        List<byte[]> byteCoverList = new List<byte[]>();
-                        foreach (Image img in _coverList)
-                        {
-                            byteCoverList.Add(imageHandler.ImageToByteArray(img));
-                        }
-                        if (vaiTroListBox.CheckedItems != null && vaiTroListBox.CheckedItems.Count > 0)
-                        {
-                            List<int> dsIdVaiTro = new List<int>();
-                            foreach (VaiTroViewModel x in vaiTroListBox.CheckedItems)
-                            {
-                                dsIdVaiTro.Add(x.IdVaiTro);
-                            }
-                            var request = new ThanhVienCreateRequest()
-                            {
-                                TenKhaiSinh = nameTxtBox.Text,
-                                NgaySinh = dobBox.Value,
-                                QuocTich = nationTxtBox.Text,
-                                NgheDanh = stageNameTxtBox.Text,
-                                DebutDate = debuteDateBox.Value,
-                                Instagram = instaTxtBox.Text,
-                                Twitter = twitterTxtBox.Text,
-                                TieuSu = storyTxtBox.Text,
-                                DsAvatar = byteAvatarList,
-                                DsCover=byteCoverList,
-                                DsIdVaiTro = dsIdVaiTro
-                            };
-                            if (checkForCorrectnessThanhVien(request))
-                                if (_thanhVienApiClient.CreateThanhVien(request))
-                                {
-                                    MessageBox.Show("Thành công!");
-                                }
-                                else MessageBox.Show("Thất bại!");
-                            saveBtn.Visible = false;
-                            vaiTroListBox.Enabled = false;
-                        }
+                        if (!dsTenVaiTro.Contains(x.TenVaiTro))
+                            dsVaiTroMoi.Add(x.TenVaiTro);
                         else
-                        {
-                            MessageBox.Show("Vui lòng điền đầy đủ thông tin!");
-                            vaiTroListBox.Focus();
-                            return;
-                        }
+                            dsIdVaiTro.Add(x.IdVaiTro);
+                        index++;
                     }
-                    else
-                    {
-                        MessageBox.Show("Vui lòng thêm ảnh!");
-                        editAvatarBtn.Focus();
-                        return;
-                    }                 
                 }
                 else
+                    foreach (VaiTroViewModel x in vaiTroListBox.CheckedItems)
+                    {
+                        dsVaiTroMoi.Add(x.TenVaiTro);
+                    }
+
+                //Tạo request
+                var request = new ThanhVienCreateRequest()
                 {
-                    MessageBox.Show("Vui lòng thêm ảnh!");
-                    editAvatarBtn.Focus();
-                    return;
-                }    
+                    TenKhaiSinh = nameTxtBox.Text,
+                    NgaySinh = dobBox.Value,
+                    QuocTich = nationTxtBox.Text,
+                    NgheDanh = stageNameTxtBox.Text,
+                    DebutDate = debuteDateBox.Value,
+                    Instagram = instaTxtBox.Text,
+                    Twitter = twitterTxtBox.Text,
+                    TieuSu = storyTxtBox.Text,
+                    DsAvatar = byteAvatarList,
+                    DsCover = byteCoverList,
+                    DsIdVaiTro = dsIdVaiTro,
+                    DsVaiTroMoi=dsVaiTroMoi
+                };
+
+                if (_thanhVienApiClient.CreateThanhVien(request))
+                {
+                    MessageBox.Show("Thành công!");
+                    Read();
+                }
+                else MessageBox.Show("Thất bại!");
             }
         }
         public static Image SetImageOpacity(Image image, float opacity)
@@ -290,10 +420,15 @@ namespace Band.ManageApp
             if (_actionType != ActionType.CREATE)
                 imagesForm.SenderInfo(ImageType.AVATAR_MEM, thanhVienGetAllVm.IdThanhVien);
             else
+            {
                 imagesForm.SenderInfo(ImageType.AVATAR_MEM);
+                imagesForm.SenderImgList(_avatarList);
+            }
+                
             /*            imagesForm.ShowDialog();*/
             imagesForm.ShowDialog();
-            avatar = imagesForm._images.FirstOrDefault().Anh;
+            if(imagesForm._images.Count>0)
+                avatar = imagesForm._images.FirstOrDefault().Anh;
             if (_actionType == ActionType.CREATE && _avatarList != null)
             {
                 _avatarList.Clear();
@@ -317,7 +452,7 @@ namespace Band.ManageApp
         /*imagesForm.Sender(images);*/
             
         /*            imagesForm.Parent = this;*/
-    }
+        }
 
         private void editAvatarBtn_MouseLeave(object sender, EventArgs e)
         {
@@ -331,8 +466,10 @@ namespace Band.ManageApp
         }
         private void loadDsVaiTro()
         {
-            var dsVaiTro = _thanhVienApiClient.GetAllVaiTro();
-            foreach(var x in dsVaiTro)
+            if (_vaiTroList!=null && _vaiTroList.Count > 0) vaiTroListBox.Items.Clear();
+            _vaiTroList = new List<VaiTroViewModel>();
+            _vaiTroList = _thanhVienApiClient.GetAllVaiTro();
+            foreach(var x in _vaiTroList)
             {
                 vaiTroListBox.Items.Add(x);
             }
@@ -352,6 +489,12 @@ namespace Band.ManageApp
 
         private void thanhVienCombobox_SelectedValueChanged(object sender, EventArgs e)
         {
+            /*if(_actionType==ActionType.UPDATE|| _actionType == ActionType.UPDATE_POSITION)
+            {
+                if (MessageBox.Show("Thoát và không lưu?",
+                      "Chưa lưu thay đổi",
+                       MessageBoxButtons.YesNo) == DialogResult.No) return;
+            }*/
             ComboBox cb = sender as ComboBox;
             if (cb.SelectedValue != null)
             {
@@ -376,13 +519,11 @@ namespace Band.ManageApp
                     cover = (Image)byteCover;
                 }
                 else cover = coverImgBox.ErrorImage;
-                
-                /*                var x1 = images.Count;
-                *//*                avatarImgBox.Image = images.First();
-                */                //Binding cho vai trò
+
+                dsVaiTroLbl.Items.Clear();
                 foreach (var x in thanhVien.DsVaiTro)
                 {
-                    dsVaiTroLbl.Text += (dsVaiTroLbl.Text == "" ? "" : ",") + x.TenVaiTro;
+                    dsVaiTroLbl.Items.Add(x.TenVaiTro);
                 }
 
                 //Binding
@@ -395,6 +536,7 @@ namespace Band.ManageApp
                 twitterTxtBox.Text = thanhVien.Twitter;
                 storyTxtBox.Text = thanhVien.TieuSu;
             }
+            _actionType = ActionType.READ;
         }
 
 /*        private void addHandlers()
@@ -425,8 +567,7 @@ namespace Band.ManageApp
             if (!nameTxtBox.Focused) return;
             if (!saveBtn.Visible) 
             {
-                saveBtn.Visible = true;
-                _actionType = ActionType.UPDATE;
+                Updating();
             }
         }
 
@@ -435,8 +576,7 @@ namespace Band.ManageApp
             if (!dobBox.Focused) return;
             if (!saveBtn.Visible)
             {
-                saveBtn.Visible = true;
-                _actionType = ActionType.UPDATE;
+                Updating();
             }
         }
 
@@ -445,8 +585,7 @@ namespace Band.ManageApp
             if (!nationTxtBox.Focused) return;
             if (!saveBtn.Visible)
             {
-                saveBtn.Visible = true;
-                _actionType = ActionType.UPDATE;
+                Updating();
             }
         }
 
@@ -455,8 +594,7 @@ namespace Band.ManageApp
             if (!stageNameTxtBox.Focused) return;
             if (!saveBtn.Visible)
             {
-                saveBtn.Visible = true;
-                _actionType = ActionType.UPDATE;
+                Updating();
             }
         }
 
@@ -465,8 +603,7 @@ namespace Band.ManageApp
             if (!debuteDateBox.Focused) return;
             if (!saveBtn.Visible)
             {
-                saveBtn.Visible = true;
-                _actionType = ActionType.UPDATE;
+                Updating();
             }
         }
 
@@ -475,9 +612,15 @@ namespace Band.ManageApp
             if (!instaTxtBox.Focused) return;
             if (!saveBtn.Visible)
             {
-                saveBtn.Visible = true;
-                _actionType = ActionType.UPDATE;
+                Updating();
             }
+        }
+
+        private void Updating()
+        {
+            saveBtn.Visible = true;
+            thanhVienCombobox.Enabled = false;
+            _actionType = ActionType.UPDATE;
         }
 
         private void twitterTxtBox_TextChanged(object sender, EventArgs e)
@@ -485,8 +628,7 @@ namespace Band.ManageApp
             if (!twitterTxtBox.Focused) return;
             if (!saveBtn.Visible)
             {
-                saveBtn.Visible = true;
-                _actionType = ActionType.UPDATE;
+                Updating();
             }
         }
 
@@ -495,13 +637,19 @@ namespace Band.ManageApp
             if (!storyTxtBox.Focused) return;
             if (!saveBtn.Visible)
             {
-                saveBtn.Visible = true;
-                _actionType = ActionType.UPDATE;
+                Updating();
             }
         }
 
         private void editVaiTroBtn_Click(object sender, EventArgs e)
         {
+            editVaiTroBtn.Hide();
+            addVaiTroBtn.Show();
+            
+            dsVaiTroLbl.Hide();
+            vaiTroListBox.Show();
+            saveBtn.Show();
+            exitBtn.Show();
             loadDsVaiTro();
             var dsTenVaiTro = new List<string>();
             foreach(var x in thanhVien.DsVaiTro)
@@ -515,6 +663,7 @@ namespace Band.ManageApp
                     vaiTroListBox.SetItemChecked(i, true);
                 }
             }
+            _actionType = ActionType.UPDATE_POSITION;
         }
 
         private bool checkForCorrectnessThanhVien(ThanhVienCreateRequest thanhVien)
@@ -549,6 +698,11 @@ namespace Band.ManageApp
 
         private void deleteBtn_Click(object sender, EventArgs e)
         {
+            if (_actionType == ActionType.UPDATE || _actionType == ActionType.UPDATE_POSITION)
+            {
+                MessageBox.Show("Chưa lưu thay đổi!");
+                return;
+            }
             var thanhVienGetAllVm = new ThanhVienGetAllViewModel();
             thanhVienGetAllVm = thanhVienCombobox.SelectedValue as ThanhVienGetAllViewModel;
             if (MessageBox.Show($"Xoá tất cả thông tin có liên quan của {thanhVienGetAllVm.NgheDanh}",
@@ -569,10 +723,14 @@ namespace Band.ManageApp
             if (_actionType != ActionType.CREATE)
                 imagesForm.SenderInfo(ImageType.COVER_MEM, thanhVienGetAllVm.IdThanhVien);
             else
+            {
                 imagesForm.SenderInfo(ImageType.COVER_MEM);
+                imagesForm.SenderImgList(_coverList);
+            }    
 
             imagesForm.ShowDialog();
-            cover = imagesForm._images.FirstOrDefault().Anh;
+            if (imagesForm._images.Count > 0)
+                cover = imagesForm._images.FirstOrDefault().Anh;
             if (_actionType == ActionType.CREATE && _coverList != null)
             {
                 _coverList.Clear();
@@ -584,5 +742,39 @@ namespace Band.ManageApp
                 
             /*            imagesForm.ShowDialog();*/
         }
+
+        private void exitBtn_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Thoát và không lưu?",
+                      "Chưa lưu thay đổi",
+                       MessageBoxButtons.YesNo) == DialogResult.Yes) Read();
+        }
+
+        private void addVaiTroBtn_Click(object sender, EventArgs e)
+        {
+            var vaiTro= Prompt.ShowDialog("Thêm vai trò mới", "Vai trò");
+            while (vaiTroListBox.Items.Contains(vaiTro)) 
+            {
+                MessageBox.Show($"Vai trò {vaiTro} đã tồn tại");
+                vaiTro = Prompt.ShowDialog("Thêm vai trò mới", "Vai trò");
+            }
+            if (vaiTro == null || vaiTro.Length == 0) return;
+            else
+            {
+                vaiTroListBox.Items.Add(new VaiTroViewModel() {
+                    TenVaiTro=vaiTro
+                });
+                vaiTroListBox.SetItemChecked(vaiTroListBox.FindStringExact(vaiTro), true);
+            }
+            
+        }
+
+        private bool checkNull(object value)
+        {
+            if (value == null || value == DBNull.Value || String.IsNullOrWhiteSpace(value.ToString())) return true;
+            return false;
+        }
+
+
     }
 }

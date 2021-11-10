@@ -9,7 +9,7 @@ namespace Bank.Api.BankServices
 {
     public interface IBankService
     {
-        Task<int> GetBalance(GetBalanceRequest request);
+        int GetBalance(GetBalanceRequest request);
         Task<int> CreateTransaction(PayingRequest request);
     }
 }

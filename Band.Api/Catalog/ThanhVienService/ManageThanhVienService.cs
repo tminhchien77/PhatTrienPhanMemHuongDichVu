@@ -48,10 +48,20 @@ namespace Band.Api.Catalog.ThanhVienService
                 });
             }
 
-            List<VaiTro> dsVaiTro = new List<VaiTro>();
+            //Thêm vai trò mới vào trước
+            List<VaiTro> dsVaiTroMoi = new List<VaiTro>();
+            foreach (var x in request.DsVaiTroMoi)
+            {
+                dsVaiTroMoi.Add(new VaiTro()
+                {
+                    TenVaiTro = x
+                });
+            }
+
+            List<VaiTro> dsVaiTroCu = new List<VaiTro>();
             foreach (var idVaiTro in request.DsIdVaiTro)
             {
-                dsVaiTro.Add(await _context.VaiTroDbo.FindAsync(idVaiTro));
+                dsVaiTroCu.Add(await _context.VaiTroDbo.FindAsync(idVaiTro));
             }
 /*            List<VaiTro> dsVaiTroMoi = new List<VaiTro>();
             foreach (var vaiTro in request.DsTenVaiTro)
@@ -95,7 +105,7 @@ namespace Band.Api.Catalog.ThanhVienService
                 };
                 thanhVien.DsThanhVienVsHinhAnh.Add(thanhVienVsHinhAnh);
             }
-            foreach (var vaiTro in dsVaiTro)
+            foreach (var vaiTro in dsVaiTroCu)
             {
                 ThanhVienVsVaiTro thanhVienVsVaiTro = new ThanhVienVsVaiTro()
                 {
@@ -104,8 +114,17 @@ namespace Band.Api.Catalog.ThanhVienService
                 };
                 thanhVien.DsThanhVienVsVaiTro.Add(thanhVienVsVaiTro);
             }
+            foreach (var vaiTro in dsVaiTroMoi)
+            {
+                ThanhVienVsVaiTro thanhVienVsVaiTro = new ThanhVienVsVaiTro()
+                {
+                    ThanhVien = thanhVien,
+                    VaiTro = vaiTro
+                };
+                thanhVien.DsThanhVienVsVaiTro.Add(thanhVienVsVaiTro);
+            }
 
-            /*await _context.VaiTroDbo.AddRangeAsync(dsVaiTroMoi);*/
+            await _context.VaiTroDbo.AddRangeAsync(dsVaiTroMoi);
             await _context.HinhAnhDbo.AddRangeAsync(dsAvatar);
             await _context.HinhAnhDbo.AddRangeAsync(dsCover);
             await _context.ThanhVienDbo.AddAsync(thanhVien);
@@ -359,6 +378,48 @@ namespace Band.Api.Catalog.ThanhVienService
             return result;
         }
 
-        
+        public async Task<int> UpdatePosition(ThanhVienUpdatePositionRequest request)
+        {
+            var thanhVienVsVaiTro = await (from tv in _context.ThanhVienVsVaiTroDbo
+                                     where tv.IdThanhVien.Equals(request.IdThanhVien)
+                                     select tv).ToListAsync();
+            //Thêm vai trò mới vào trước
+            List < VaiTro > dsVaiTroMoi = new List<VaiTro>();
+            foreach (var x in request.DsVaiTroMoi)
+            {
+                dsVaiTroMoi.Add(new VaiTro()
+                {
+                    TenVaiTro = x
+                });
+            }
+
+            List<VaiTro> dsVaiTroCu = new List<VaiTro>();
+            foreach (var idVaiTro in request.DsIdVaiTro)
+            {
+                dsVaiTroCu.Add(await _context.VaiTroDbo.FindAsync(idVaiTro));
+            }
+
+            List<ThanhVienVsVaiTro> ds = new List<ThanhVienVsVaiTro>();
+            foreach (var x in dsVaiTroMoi)
+            {
+                ds.Add(new ThanhVienVsVaiTro()
+                {
+                    IdThanhVien = request.IdThanhVien,
+                    VaiTro = x
+                });
+            }
+            foreach (var x in dsVaiTroCu)
+            {
+                ds.Add(new ThanhVienVsVaiTro()
+                {
+                    IdThanhVien = request.IdThanhVien,
+                    VaiTro = x
+                });
+            }
+
+            _context.RemoveRange(thanhVienVsVaiTro);
+            await _context.AddRangeAsync(ds);
+            return await _context.SaveChangesAsync();
+        }
     }
 }

@@ -7,7 +7,7 @@ namespace Band.Data.Entities
 {
     public partial class NhomNhac
     {
-
+        public int IdNhom { get; set; }
         public string TenNhom { get; set; }
 
         public DateTime DebutDate { get; set; }
@@ -21,5 +21,7 @@ namespace Band.Data.Entities
         public string AppleMusic { get; set; }
 
         public string Youtube { get; set; }
+
+        public byte[] Logo { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Band.ViewModels.Catalog.LoaiVe;
 using Band.ViewModels.Catalog.Show;
+using Band.ViewModels.Common;
 using Band.ViewModels.Utilities;
 using System;
 using System.Collections.Generic;
@@ -18,5 +19,7 @@ namespace Band.ManageApp.Services
         bool UpdateShowInfor(ShowInfoUpdateRequest request);
         bool UpdateTicketInfor(TicketInfoUpdateRequest request);
         bool Delete(int idShow);
+        bool DeleteImages(List<int> request);
+        PageResult<ShowStatiscalViewModel> GetStatiscalPagingAsync(StatiscalRequest request);
     }
 }

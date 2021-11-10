@@ -1,5 +1,6 @@
 ﻿using Band.ViewModels.Catalog.LoaiVe;
 using Band.ViewModels.Catalog.Show;
+using Band.ViewModels.Common;
 using Band.ViewModels.Utilities;
 using Newtonsoft.Json;
 using System;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Band.ManageApp.Services
@@ -104,6 +106,34 @@ namespace Band.ManageApp.Services
             var response = client.UploadString(uri, "DELETE", "");
             if (response == "true") return true;
             return false;
+        }
+        public bool DeleteImages(List<int> request)
+        {
+            var json = JsonConvert.SerializeObject(request);
+            WebClient client = new WebClient();
+            client.Headers[HttpRequestHeader.ContentType] = "application/json";
+            var response = client.UploadString(uri + "delete-images", "DELETE", json);
+            if (response == "true") return true;
+            return false;
+        }
+
+        public PageResult<ShowStatiscalViewModel> GetStatiscalPagingAsync(StatiscalRequest request)
+        {
+            var json = JsonConvert.SerializeObject(request);
+            WebClient client = new WebClient();
+            client.Headers[HttpRequestHeader.ContentType] = "application/json";
+            var response = "";
+            try
+            {
+                response = client.UploadString(uri + "statiscal-paging", "POST", json);
+            }
+            catch (WebException e)
+            {
+                string pageContent = new StreamReader(e.Response.GetResponseStream()).ReadToEnd().ToString();
+                MessageBox.Show(pageContent);
+            }
+            PageResult<ShowStatiscalViewModel> result = JsonConvert.DeserializeObject<PageResult<ShowStatiscalViewModel>>(response);
+            return result;
         }
     }
 }

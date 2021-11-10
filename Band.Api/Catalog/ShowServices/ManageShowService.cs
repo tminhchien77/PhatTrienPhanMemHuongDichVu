@@ -1,6 +1,7 @@
 ﻿using Band.Data.EF;
 using Band.Data.Entities;
 using Band.ViewModels.Catalog.Show;
+using Band.ViewModels.Common;
 using Band.ViewModels.Utilities;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -132,8 +133,9 @@ namespace Band.Api.Catalog.ShowServices
 
         public List<ShowGetAllViewModel> GetAll()
         {
-            var dsShow = _context.ShowDbo.Select(p => new { p.IdShow, p.TenShow, p.ThoiDiemBieuDien }).ToList();
-            List<ShowGetAllViewModel> dsShowVm = new List<ShowGetAllViewModel>();
+            var dsShow = _context.ShowDbo.Where(p => p.ThoiDiemBieuDien > DateTime.Now).Select(p => new { p.IdShow, p.TenShow, p.ThoiDiemBieuDien }).ToList();
+/*            _context.ShowDbo.Where(p => p.ThoiDiemBieuDien > DateTime.Now).Select(p => new { p.IdShow, p.TenShow, p.ThoiDiemBieuDien}).ToList();
+*/            List<ShowGetAllViewModel> dsShowVm = new List<ShowGetAllViewModel>();
             foreach (var x in dsShow)
             {
                 dsShowVm.Add(new ShowGetAllViewModel()
@@ -239,6 +241,66 @@ namespace Band.Api.Catalog.ShowServices
             _context.ShowVsLoaiVeDbo.RemoveRange(dsShowVsLoaiVe);
             await _context.ShowVsLoaiVeDbo.AddRangeAsync(dsChiTietVe);
             return await _context.SaveChangesAsync();
+        }
+        public async Task<int> DeleteImages(List<int> listIdAnh)
+        {
+            var dsHinhAnh = new List<HinhAnh>();
+            foreach (var i in listIdAnh)
+            {
+                dsHinhAnh.Add(await _context.HinhAnhDbo.FindAsync(i));
+            }
+
+            var dsShowVsHinhAnh = new List<ShowVsHinhAnh>();
+            foreach (var i in listIdAnh)
+            {
+                dsShowVsHinhAnh.Add((from h in _context.ShowVsHinhAnhDbo
+                                          where h.IdAnh.Equals(i)
+                                          select h).FirstOrDefault());
+            }
+            _context.ShowVsHinhAnhDbo.RemoveRange(dsShowVsHinhAnh);
+            _context.HinhAnhDbo.RemoveRange(dsHinhAnh);
+            return await _context.SaveChangesAsync();
+        }
+
+        public async Task<PageResult<ShowStatiscalViewModel>> GetStatiscalData(StatiscalRequest request)
+        {
+            var query = _context.ShowDbo.Where(p => p.ThoiDiemBieuDien > request.FromDate
+                            && p.ThoiDiemBieuDien < request.ToDate).
+                            Select(p => new { p.IdShow, p.TenShow, p.ThoiDiemBieuDien, p.ThoiDiemMoBan, p.DiaDiem });
+
+            int totalRow = await query.CountAsync();
+            var dsShow = await query.Skip((request.PageIndex - 1) * request.PageSize)
+                .Take(request.PageSize)
+                .Select(x => new ShowStatiscalViewModel()
+                {
+                    IdShow = x.IdShow,
+                    TenShow = x.TenShow,
+                    DiaDiem=x.DiaDiem,
+                    ThoiDiemMoBan=x.ThoiDiemMoBan,
+                    ThoiDiemBieuDien = x.ThoiDiemBieuDien,
+                    DsChiTietLoaiVe=new List<TicketStatiscalViewModel>()
+                }).ToListAsync();
+
+            foreach(var x in dsShow)
+            {
+                var dsVe = await _context.ShowVsLoaiVeDbo.Where(p => p.IdShow.Equals(x.IdShow)).ToListAsync();
+                foreach(var y in dsVe)
+                {
+                    x.DsChiTietLoaiVe.Add(new TicketStatiscalViewModel()
+                    {
+                        Gia = y.Gia,
+                        ConLai = y.ConLai,
+                        SoLuongBanRa = y.SoLuongBanRa
+                    });
+                }
+            }
+
+            var pageResult = new PageResult<ShowStatiscalViewModel>()
+            {
+                TotalRecord = totalRow,
+                List = dsShow
+            };
+            return pageResult;
         }
     }
 }

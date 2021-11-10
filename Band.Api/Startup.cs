@@ -1,3 +1,4 @@
+using Band.Api.Catalog.BandServices;
 using Band.Api.Catalog.LoaiVeServices;
 using Band.Api.Catalog.ShowServices;
 using Band.Api.Catalog.ThanhVienService;
@@ -49,6 +50,7 @@ namespace Band.Api
             services.AddTransient<ILoaiVeService, LoaiVeService>();
             services.AddTransient<IManageShowService, ManageShowService>();
             services.AddTransient<IPublicShowService, PublicShowService>();
+            services.AddTransient<IBandService, BandService>();
             services.AddControllers();
         }
 

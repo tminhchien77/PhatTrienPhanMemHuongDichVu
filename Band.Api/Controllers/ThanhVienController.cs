@@ -49,12 +49,18 @@ namespace Band.Api.Controllers
             var result = await _manageThanhVienService.Create(request);
             if (result == 0)
                 return BadRequest();
-            return Ok(result);
+            return Ok(true);
         }
         [HttpPut]
         public async Task<IActionResult> Update(ThanhVienUpdateRequestWithoutVaiTro request)
         {
             var result = await _manageThanhVienService.Update(request);
+            return Ok(true);
+        }
+        [HttpPost("update-position")]
+        public async Task<IActionResult> UpdatePosition(ThanhVienUpdatePositionRequest request)
+        {
+            var result = await _manageThanhVienService.UpdatePosition(request);
             if (result == 0)
                 return BadRequest();
             return Ok(true);
@@ -65,7 +71,7 @@ namespace Band.Api.Controllers
             var result = await _manageThanhVienService.AddingImages(request);
             if (result == 0)
                 return BadRequest();
-            return Ok(result);
+            return Ok(true);
         }
         [HttpGet("avatar-thanh-vien")]
         public async Task<IActionResult> GetAllAvatarById(int idThanhVien)
@@ -129,7 +135,7 @@ namespace Band.Api.Controllers
         {
             var result = await _publicThanhVienService.GetById(idThanhVien);
             if (result == null)
-                return BadRequest("Không tìm thấy thành viên nào");
+                return Ok("Không tìm thấy thành viên nào");
             return Ok(result);
         }
     }

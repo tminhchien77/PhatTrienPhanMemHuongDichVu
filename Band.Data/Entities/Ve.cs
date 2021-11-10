@@ -4,10 +4,9 @@ namespace Band.Data.Entities
 {
     public partial class Ve
     {
-        public int IdVe { get; set; }
-
+        public string MaSoVe { get; set; }
         public int IDHoaDon { get; set; }
         public HoaDon HoaDon { set; get; }
-        public string MaSoVe { set; get; }
+        
     }
 }
