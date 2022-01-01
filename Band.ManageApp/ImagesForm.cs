@@ -1,4 +1,5 @@
 ﻿using Band.ManageApp.Services;
+using Band.ViewModels.Catalog.Show;
 using Band.ViewModels.Catalog.ThanhVien;
 using Band.ViewModels.Utilities;
 using System;
@@ -16,22 +17,23 @@ namespace Band.ManageApp
     public partial class ImagesForm : Form
     {
         private ImageHandler _imageHandler;
-        public NewListOfImage _images;
+        public NewListOfImageObject _images;
         private int _idObject;
         private ImageType _imgType;
         private int numOfImages;
         private ThanhVienApiClient _thanhVienApiClient;
+        private ShowApiClient _showApiClient;
         /*public delegate void SendImgList(ref NewListOfImage imgList);*/
-        public delegate void SendId(ImageType imgeType, int id=-1);
+        public delegate void SendInfo(ImageType imgeType, int id=-1);
         /*public SendImgList Sender;*/
-        public SendId SenderId;
+        public SendInfo SenderInfo;
         public ImagesForm()
         {
             InitializeComponent();
             _imageHandler = new ImageHandler();
-            _images = new NewListOfImage();
+            _images = new NewListOfImageObject();
             /*Sender = new SendImgList(GetImgList);*/
-            SenderId = new SendId(GetInfo);
+            SenderInfo = new SendInfo(GetInfo);
             _images.Change += delegate (object sender, EventArgs arg)
             {
                 if (_images.Count > 0) loadImages();
@@ -55,17 +57,31 @@ namespace Band.ManageApp
             _idObject = id;
             _imgType = imageType;
 
-            _thanhVienApiClient = new ThanhVienApiClient();
-            if(_imgType == ImageType.AVATAR_MEM)
-                foreach(var x in _thanhVienApiClient.GetAllAvatarById(id))
+            
+            if (imageType == ImageType.IMG_SHOW)
+            {
+                _showApiClient = new ShowApiClient();
+                foreach (var x in _showApiClient.GetAllImgById(id))
                 {
                     _images.Add(new ImageObject(x));
                 }
-            else if (imageType == ImageType.COVER_MEM)
-                foreach (var x in _thanhVienApiClient.GetAllCoverById(id))
-                {
-                    _images.Add(new ImageObject(x));
-                }
+            }
+            else
+            {
+                _thanhVienApiClient = new ThanhVienApiClient();
+                if (_imgType == ImageType.AVATAR_MEM)
+                    foreach (var x in _thanhVienApiClient.GetAllAvatarById(id))
+                    {
+                        _images.Add(new ImageObject(x));
+                    }
+                else if (imageType == ImageType.COVER_MEM)
+                    foreach (var x in _thanhVienApiClient.GetAllCoverById(id))
+                    {
+                        _images.Add(new ImageObject(x));
+                    }
+            }
+            
+            
 
             /*            _images.AddRange(_thanhVienApiClient.GetAllImgeById(id));
             */
@@ -145,7 +161,7 @@ namespace Band.ManageApp
             {
                 byteImgList.Add(_images[i].CovertToByteArray());
             }
-            if (_idObject!=-1)
+            if (_idObject!=-1 && _imgType!=ImageType.IMG_SHOW)
             {
                 HinhAnhThanhVienRequest request;
                 if (_imgType == ImageType.AVATAR_MEM)
@@ -169,9 +185,18 @@ namespace Band.ManageApp
                 if (_thanhVienApiClient.AddingImages(request)) MessageBox.Show("Thành công!");
                 else MessageBox.Show("Thất bại!");
             }
+            else if (_idObject != -1 && _imgType == ImageType.IMG_SHOW)
+            {
+                var request = new ImagesShowAddRequest()
+                {
+                    DsAnh = byteImgList,
+                    IdShow = _idObject,
+                    IdLoai = (int)ImageType.IMG_SHOW
+                };
+                if (_showApiClient.AddingImages(request)) _ = MessageBox.Show("Thành công!");
+                else MessageBox.Show("Thất bại!");
+            }
             saveBtn.Visible = false;
-
-
         }
 
         private void ImagesForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -188,13 +213,14 @@ namespace Band.ManageApp
         {
             int i = 0;
             var listId = new List<int>();
+            var listimg = new List<int>();
             foreach (var p in imgsContainer.Controls.OfType<Panel>())
             {
                 if (((CheckBox)p.Controls.OfType<CheckBox>().FirstOrDefault()).Checked)
                 {
                     var img = ((PictureBox)p.Controls.OfType<PictureBox>().FirstOrDefault());
                     listId.Add(_images[i].IdAnh.Value);
-                    _images.RemoveAt(i);  
+                    listimg.Add(i); 
                 }
                 i++;
             }
@@ -204,7 +230,11 @@ namespace Band.ManageApp
                     _thanhVienApiClient = new ThanhVienApiClient();
                 _thanhVienApiClient.DeleteImages(listId);
             }
-                   
+            foreach(var x in listimg)
+            {
+                _images.RemoveAt(x);
+            }
+            
             deleteBtn.Visible = false;
             selectAllCheckBox.Visible = false;
         }

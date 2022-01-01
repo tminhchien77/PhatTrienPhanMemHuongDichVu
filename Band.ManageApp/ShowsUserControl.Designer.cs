@@ -29,36 +29,54 @@ namespace Band.ManageApp
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ShowsUserControl));
             this.panel1 = new System.Windows.Forms.Panel();
             this.addShowBtn = new System.Windows.Forms.PictureBox();
             this.showsComboBox = new System.Windows.Forms.ComboBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.saveBtn = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.editShowInfoBtn = new System.Windows.Forms.PictureBox();
+            this.saveShowInfoBtn = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.dateTimePicker3 = new System.Windows.Forms.DateTimePicker();
-            this.label5 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
-            this.dateTimePicker4 = new System.Windows.Forms.DateTimePicker();
-            this.textBox2 = new System.Windows.Forms.TextBox();
+            this.locationTxtBox = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
-            this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
-            this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
+            this.performDatebox = new System.Windows.Forms.DateTimePicker();
+            this.performTimeBox = new System.Windows.Forms.DateTimePicker();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.nameTxtBox = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.saleTimeBox = new System.Windows.Forms.DateTimePicker();
+            this.saleDateBox = new System.Windows.Forms.DateTimePicker();
+            this.label5 = new System.Windows.Forms.Label();
             this.panel4 = new System.Windows.Forms.Panel();
+            this.editTicketInfoBtn = new System.Windows.Forms.PictureBox();
+            this.saveTiketInfoBtn = new System.Windows.Forms.Button();
+            this.totalPrice = new System.Windows.Forms.Label();
+            this.totalTickets = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.detailTicketTxtBox = new System.Windows.Forms.RichTextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
             this.ticketsTbl = new System.Windows.Forms.DataGridView();
             this.tiketTypeCol = new System.Windows.Forms.DataGridViewComboBoxColumn();
-            this.ticketDetailsCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.priceTicketCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.quantityTicketCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.deleteBtnCol = new System.Windows.Forms.DataGridViewButtonColumn();
             this.editCoverImgBtn = new System.Windows.Forms.PictureBox();
             this.showPictureBox = new System.Windows.Forms.PictureBox();
+            this.deleteShowBtn = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.addShowBtn)).BeginInit();
             this.panel2.SuspendLayout();
             this.panel3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.editShowInfoBtn)).BeginInit();
             this.panel4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.editTicketInfoBtn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.ticketsTbl)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.editCoverImgBtn)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.showPictureBox)).BeginInit();
@@ -66,6 +84,7 @@ namespace Band.ManageApp
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.deleteShowBtn);
             this.panel1.Controls.Add(this.addShowBtn);
             this.panel1.Controls.Add(this.showsComboBox);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
@@ -85,6 +104,8 @@ namespace Band.ManageApp
             this.addShowBtn.TabIndex = 6;
             this.addShowBtn.TabStop = false;
             this.addShowBtn.Click += new System.EventHandler(this.addShowBtn_Click);
+            this.addShowBtn.MouseLeave += new System.EventHandler(this.addShowBtn_MouseLeave);
+            this.addShowBtn.MouseHover += new System.EventHandler(this.addShowBtn_MouseHover);
             // 
             // showsComboBox
             // 
@@ -93,9 +114,11 @@ namespace Band.ManageApp
             this.showsComboBox.Name = "showsComboBox";
             this.showsComboBox.Size = new System.Drawing.Size(151, 23);
             this.showsComboBox.TabIndex = 5;
+            this.showsComboBox.SelectedValueChanged += new System.EventHandler(this.showsComboBox_SelectedValueChanged);
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.saveBtn);
             this.panel2.Controls.Add(this.panel3);
             this.panel2.Controls.Add(this.panel4);
             this.panel2.Controls.Add(this.editCoverImgBtn);
@@ -103,67 +126,74 @@ namespace Band.ManageApp
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(0, 34);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(762, 460);
+            this.panel2.Size = new System.Drawing.Size(762, 533);
             this.panel2.TabIndex = 1;
+            // 
+            // saveBtn
+            // 
+            this.saveBtn.Location = new System.Drawing.Point(320, 486);
+            this.saveBtn.Name = "saveBtn";
+            this.saveBtn.Size = new System.Drawing.Size(151, 37);
+            this.saveBtn.TabIndex = 8;
+            this.saveBtn.Text = "Lưu";
+            this.saveBtn.UseVisualStyleBackColor = true;
+            this.saveBtn.Click += new System.EventHandler(this.saveBtn_Click);
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this.editShowInfoBtn);
+            this.panel3.Controls.Add(this.saveShowInfoBtn);
             this.panel3.Controls.Add(this.label9);
-            this.panel3.Controls.Add(this.label8);
-            this.panel3.Controls.Add(this.dateTimePicker3);
-            this.panel3.Controls.Add(this.label5);
             this.panel3.Controls.Add(this.label7);
-            this.panel3.Controls.Add(this.dateTimePicker4);
-            this.panel3.Controls.Add(this.textBox2);
+            this.panel3.Controls.Add(this.locationTxtBox);
             this.panel3.Controls.Add(this.label4);
-            this.panel3.Controls.Add(this.dateTimePicker2);
-            this.panel3.Controls.Add(this.dateTimePicker1);
+            this.panel3.Controls.Add(this.performDatebox);
+            this.panel3.Controls.Add(this.performTimeBox);
             this.panel3.Controls.Add(this.label2);
-            this.panel3.Controls.Add(this.textBox1);
+            this.panel3.Controls.Add(this.label8);
+            this.panel3.Controls.Add(this.nameTxtBox);
             this.panel3.Controls.Add(this.label1);
+            this.panel3.Controls.Add(this.saleTimeBox);
+            this.panel3.Controls.Add(this.saleDateBox);
+            this.panel3.Controls.Add(this.label5);
             this.panel3.Location = new System.Drawing.Point(7, 130);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(357, 222);
+            this.panel3.Size = new System.Drawing.Size(752, 128);
             this.panel3.TabIndex = 6;
+            // 
+            // editShowInfoBtn
+            // 
+            this.editShowInfoBtn.BackColor = System.Drawing.Color.Transparent;
+            this.editShowInfoBtn.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.editShowInfoBtn.Image = ((System.Drawing.Image)(resources.GetObject("editShowInfoBtn.Image")));
+            this.editShowInfoBtn.Location = new System.Drawing.Point(153, 13);
+            this.editShowInfoBtn.Name = "editShowInfoBtn";
+            this.editShowInfoBtn.Size = new System.Drawing.Size(27, 22);
+            this.editShowInfoBtn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.editShowInfoBtn.TabIndex = 8;
+            this.editShowInfoBtn.TabStop = false;
+            this.editShowInfoBtn.Click += new System.EventHandler(this.editShowInfoBtn_Click);
+            // 
+            // saveShowInfoBtn
+            // 
+            this.saveShowInfoBtn.Location = new System.Drawing.Point(665, 10);
+            this.saveShowInfoBtn.Name = "saveShowInfoBtn";
+            this.saveShowInfoBtn.Size = new System.Drawing.Size(75, 23);
+            this.saveShowInfoBtn.TabIndex = 18;
+            this.saveShowInfoBtn.Text = "Lưu";
+            this.saveShowInfoBtn.UseVisualStyleBackColor = true;
+            this.saveShowInfoBtn.Visible = false;
+            this.saveShowInfoBtn.Click += new System.EventHandler(this.saveShowInfoBtn_Click);
             // 
             // label9
             // 
             this.label9.AutoSize = true;
             this.label9.Font = new System.Drawing.Font("Segoe UI Semibold", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point);
-            this.label9.Location = new System.Drawing.Point(131, 10);
+            this.label9.Location = new System.Drawing.Point(3, 10);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(95, 25);
+            this.label9.Size = new System.Drawing.Size(144, 25);
             this.label9.TabIndex = 13;
-            this.label9.Text = "Thông tin";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(3, 140);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(94, 15);
-            this.label8.TabIndex = 12;
-            this.label8.Text = "Ngày mở bán vé";
-            // 
-            // dateTimePicker3
-            // 
-            this.dateTimePicker3.AllowDrop = true;
-            this.dateTimePicker3.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-            this.dateTimePicker3.Location = new System.Drawing.Point(256, 134);
-            this.dateTimePicker3.Name = "dateTimePicker3";
-            this.dateTimePicker3.ShowUpDown = true;
-            this.dateTimePicker3.Size = new System.Drawing.Size(88, 23);
-            this.dateTimePicker3.TabIndex = 11;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(225, 140);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(25, 15);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Giờ";
-            this.label5.Click += new System.EventHandler(this.label5_Click);
+            this.label9.Text = "Thông tin show";
             // 
             // label7
             // 
@@ -174,48 +204,44 @@ namespace Band.ManageApp
             this.label7.TabIndex = 8;
             this.label7.Text = "Ngày biểu diễn";
             // 
-            // dateTimePicker4
+            // locationTxtBox
             // 
-            this.dateTimePicker4.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dateTimePicker4.Location = new System.Drawing.Point(106, 134);
-            this.dateTimePicker4.Name = "dateTimePicker4";
-            this.dateTimePicker4.Size = new System.Drawing.Size(95, 23);
-            this.dateTimePicker4.TabIndex = 9;
-            // 
-            // textBox2
-            // 
-            this.textBox2.Location = new System.Drawing.Point(106, 179);
-            this.textBox2.Name = "textBox2";
-            this.textBox2.Size = new System.Drawing.Size(238, 23);
-            this.textBox2.TabIndex = 7;
+            this.locationTxtBox.Location = new System.Drawing.Point(502, 55);
+            this.locationTxtBox.Name = "locationTxtBox";
+            this.locationTxtBox.ReadOnly = true;
+            this.locationTxtBox.Size = new System.Drawing.Size(238, 23);
+            this.locationTxtBox.TabIndex = 7;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 182);
+            this.label4.Location = new System.Drawing.Point(399, 58);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(54, 15);
             this.label4.TabIndex = 6;
             this.label4.Text = "Địa điểm";
             // 
-            // dateTimePicker2
+            // performDatebox
             // 
-            this.dateTimePicker2.AllowDrop = true;
-            this.dateTimePicker2.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dateTimePicker2.Location = new System.Drawing.Point(106, 92);
-            this.dateTimePicker2.Name = "dateTimePicker2";
-            this.dateTimePicker2.Size = new System.Drawing.Size(95, 23);
-            this.dateTimePicker2.TabIndex = 5;
-            this.dateTimePicker2.ValueChanged += new System.EventHandler(this.dateTimePicker2_ValueChanged);
+            this.performDatebox.AllowDrop = true;
+            this.performDatebox.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.performDatebox.Location = new System.Drawing.Point(106, 92);
+            this.performDatebox.Name = "performDatebox";
+            this.performDatebox.Size = new System.Drawing.Size(95, 23);
+            this.performDatebox.TabIndex = 5;
+            this.performDatebox.ValueChanged += new System.EventHandler(this.performDatebox_ValueChanged);
+            this.performDatebox.MouseCaptureChanged += new System.EventHandler(this.performDatebox_MouseCaptureChanged);
             // 
-            // dateTimePicker1
+            // performTimeBox
             // 
-            this.dateTimePicker1.Format = System.Windows.Forms.DateTimePickerFormat.Time;
-            this.dateTimePicker1.Location = new System.Drawing.Point(256, 92);
-            this.dateTimePicker1.Name = "dateTimePicker1";
-            this.dateTimePicker1.ShowUpDown = true;
-            this.dateTimePicker1.Size = new System.Drawing.Size(88, 23);
-            this.dateTimePicker1.TabIndex = 3;
+            this.performTimeBox.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.performTimeBox.Location = new System.Drawing.Point(256, 92);
+            this.performTimeBox.Name = "performTimeBox";
+            this.performTimeBox.ShowUpDown = true;
+            this.performTimeBox.Size = new System.Drawing.Size(88, 23);
+            this.performTimeBox.TabIndex = 3;
+            this.performTimeBox.ValueChanged += new System.EventHandler(this.performTimeBox_ValueChanged);
+            this.performTimeBox.MouseCaptureChanged += new System.EventHandler(this.performTimeBox_MouseCaptureChanged);
             // 
             // label2
             // 
@@ -226,12 +252,23 @@ namespace Band.ManageApp
             this.label2.TabIndex = 2;
             this.label2.Text = "Giờ";
             // 
-            // textBox1
+            // label8
             // 
-            this.textBox1.Location = new System.Drawing.Point(106, 52);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(238, 23);
-            this.textBox1.TabIndex = 1;
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(399, 98);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(94, 15);
+            this.label8.TabIndex = 12;
+            this.label8.Text = "Ngày mở bán vé";
+            // 
+            // nameTxtBox
+            // 
+            this.nameTxtBox.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.nameTxtBox.Location = new System.Drawing.Point(106, 52);
+            this.nameTxtBox.Name = "nameTxtBox";
+            this.nameTxtBox.ReadOnly = true;
+            this.nameTxtBox.Size = new System.Drawing.Size(238, 23);
+            this.nameTxtBox.TabIndex = 1;
             // 
             // label1
             // 
@@ -242,59 +279,228 @@ namespace Band.ManageApp
             this.label1.TabIndex = 0;
             this.label1.Text = "Tên show";
             // 
+            // saleTimeBox
+            // 
+            this.saleTimeBox.AllowDrop = true;
+            this.saleTimeBox.Format = System.Windows.Forms.DateTimePickerFormat.Time;
+            this.saleTimeBox.Location = new System.Drawing.Point(652, 92);
+            this.saleTimeBox.Name = "saleTimeBox";
+            this.saleTimeBox.ShowUpDown = true;
+            this.saleTimeBox.Size = new System.Drawing.Size(88, 23);
+            this.saleTimeBox.TabIndex = 11;
+            this.saleTimeBox.ValueChanged += new System.EventHandler(this.saleTimeBox_ValueChanged);
+            this.saleTimeBox.MouseCaptureChanged += new System.EventHandler(this.saleTimeBox_MouseCaptureChanged);
+            // 
+            // saleDateBox
+            // 
+            this.saleDateBox.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.saleDateBox.Location = new System.Drawing.Point(502, 92);
+            this.saleDateBox.Name = "saleDateBox";
+            this.saleDateBox.Size = new System.Drawing.Size(95, 23);
+            this.saleDateBox.TabIndex = 9;
+            this.saleDateBox.ValueChanged += new System.EventHandler(this.saleDateBox_ValueChanged);
+            this.saleDateBox.MouseCaptureChanged += new System.EventHandler(this.saleDateBox_MouseCaptureChanged);
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(621, 98);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(25, 15);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "Giờ";
+            // 
             // panel4
             // 
+            this.panel4.Controls.Add(this.editTicketInfoBtn);
+            this.panel4.Controls.Add(this.saveTiketInfoBtn);
+            this.panel4.Controls.Add(this.totalPrice);
+            this.panel4.Controls.Add(this.totalTickets);
+            this.panel4.Controls.Add(this.label6);
+            this.panel4.Controls.Add(this.detailTicketTxtBox);
+            this.panel4.Controls.Add(this.label3);
+            this.panel4.Controls.Add(this.label10);
             this.panel4.Controls.Add(this.ticketsTbl);
-            this.panel4.Location = new System.Drawing.Point(370, 130);
+            this.panel4.Location = new System.Drawing.Point(7, 279);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(381, 327);
+            this.panel4.Size = new System.Drawing.Size(752, 201);
             this.panel4.TabIndex = 7;
+            // 
+            // editTicketInfoBtn
+            // 
+            this.editTicketInfoBtn.BackColor = System.Drawing.Color.Transparent;
+            this.editTicketInfoBtn.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.editTicketInfoBtn.Image = ((System.Drawing.Image)(resources.GetObject("editTicketInfoBtn.Image")));
+            this.editTicketInfoBtn.Location = new System.Drawing.Point(153, 9);
+            this.editTicketInfoBtn.Name = "editTicketInfoBtn";
+            this.editTicketInfoBtn.Size = new System.Drawing.Size(27, 22);
+            this.editTicketInfoBtn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.editTicketInfoBtn.TabIndex = 19;
+            this.editTicketInfoBtn.TabStop = false;
+            this.editTicketInfoBtn.Click += new System.EventHandler(this.editTicketInfoBtn_Click);
+            // 
+            // saveTiketInfoBtn
+            // 
+            this.saveTiketInfoBtn.Location = new System.Drawing.Point(665, 13);
+            this.saveTiketInfoBtn.Name = "saveTiketInfoBtn";
+            this.saveTiketInfoBtn.Size = new System.Drawing.Size(75, 23);
+            this.saveTiketInfoBtn.TabIndex = 8;
+            this.saveTiketInfoBtn.Text = "Lưu";
+            this.saveTiketInfoBtn.UseVisualStyleBackColor = true;
+            this.saveTiketInfoBtn.Visible = false;
+            this.saveTiketInfoBtn.Click += new System.EventHandler(this.saveTiketInfoBtn_Click);
+            // 
+            // totalPrice
+            // 
+            this.totalPrice.AutoSize = true;
+            this.totalPrice.Location = new System.Drawing.Point(327, 203);
+            this.totalPrice.Name = "totalPrice";
+            this.totalPrice.Size = new System.Drawing.Size(0, 15);
+            this.totalPrice.TabIndex = 17;
+            // 
+            // totalTickets
+            // 
+            this.totalTickets.AutoSize = true;
+            this.totalTickets.Location = new System.Drawing.Point(225, 203);
+            this.totalTickets.Name = "totalTickets";
+            this.totalTickets.Size = new System.Drawing.Size(0, 15);
+            this.totalTickets.TabIndex = 16;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(3, 166);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(67, 15);
+            this.label6.TabIndex = 14;
+            this.label6.Text = "Tổng cộng:";
+            // 
+            // detailTicketTxtBox
+            // 
+            this.detailTicketTxtBox.Location = new System.Drawing.Point(468, 50);
+            this.detailTicketTxtBox.Name = "detailTicketTxtBox";
+            this.detailTicketTxtBox.ReadOnly = true;
+            this.detailTicketTxtBox.Size = new System.Drawing.Size(272, 131);
+            this.detailTicketTxtBox.TabIndex = 15;
+            this.detailTicketTxtBox.Text = "";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(468, 31);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(60, 15);
+            this.label3.TabIndex = 14;
+            this.label3.Text = "Chi tiết vé";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("Segoe UI Semibold", 14.25F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point);
+            this.label10.Location = new System.Drawing.Point(3, 9);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(120, 25);
+            this.label10.TabIndex = 14;
+            this.label10.Text = "Thông tin vé";
             // 
             // ticketsTbl
             // 
+            this.ticketsTbl.AllowUserToAddRows = false;
+            this.ticketsTbl.AllowUserToDeleteRows = false;
+            this.ticketsTbl.AllowUserToResizeRows = false;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.ticketsTbl.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
+            this.ticketsTbl.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
+            this.ticketsTbl.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.ticketsTbl.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.ticketsTbl.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.tiketTypeCol,
-            this.ticketDetailsCol});
-            this.ticketsTbl.Location = new System.Drawing.Point(13, 24);
+            this.priceTicketCol,
+            this.quantityTicketCol,
+            this.deleteBtnCol});
+            this.ticketsTbl.Location = new System.Drawing.Point(3, 50);
+            this.ticketsTbl.MultiSelect = false;
             this.ticketsTbl.Name = "ticketsTbl";
+            this.ticketsTbl.ReadOnly = true;
+            this.ticketsTbl.RowHeadersVisible = false;
             this.ticketsTbl.RowTemplate.Height = 25;
-            this.ticketsTbl.Size = new System.Drawing.Size(351, 290);
+            this.ticketsTbl.Size = new System.Drawing.Size(414, 98);
             this.ticketsTbl.TabIndex = 0;
+            this.ticketsTbl.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ticketsTbl_CellContentClick);
+            this.ticketsTbl.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.ticketsTbl_CellEndEdit);
             this.ticketsTbl.CellValueChanged += new System.Windows.Forms.DataGridViewCellEventHandler(this.ticketsTbl_CellValueChanged);
-            this.ticketsTbl.ColumnDisplayIndexChanged += new System.Windows.Forms.DataGridViewColumnEventHandler(this.ticketsTbl_ColumnDisplayIndexChanged);
             this.ticketsTbl.CurrentCellDirtyStateChanged += new System.EventHandler(this.ticketsTbl_CurrentCellDirtyStateChanged);
+            this.ticketsTbl.EditingControlShowing += new System.Windows.Forms.DataGridViewEditingControlShowingEventHandler(this.ticketsTbl_EditingControlShowing);
             // 
             // tiketTypeCol
             // 
             this.tiketTypeCol.HeaderText = "Loại vé";
             this.tiketTypeCol.Name = "tiketTypeCol";
+            this.tiketTypeCol.ReadOnly = true;
+            this.tiketTypeCol.Width = 120;
             // 
-            // ticketDetailsCol
+            // priceTicketCol
             // 
-            this.ticketDetailsCol.HeaderText = "Chi tiết";
-            this.ticketDetailsCol.Name = "ticketDetailsCol";
+            this.priceTicketCol.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            dataGridViewCellStyle4.Format = "C2";
+            dataGridViewCellStyle4.NullValue = null;
+            this.priceTicketCol.DefaultCellStyle = dataGridViewCellStyle4;
+            this.priceTicketCol.HeaderText = "Giá";
+            this.priceTicketCol.Name = "priceTicketCol";
+            this.priceTicketCol.ReadOnly = true;
+            // 
+            // quantityTicketCol
+            // 
+            this.quantityTicketCol.HeaderText = "Số lượng";
+            this.quantityTicketCol.Name = "quantityTicketCol";
+            this.quantityTicketCol.ReadOnly = true;
+            this.quantityTicketCol.Width = 120;
+            // 
+            // deleteBtnCol
+            // 
+            this.deleteBtnCol.HeaderText = "";
+            this.deleteBtnCol.Name = "deleteBtnCol";
+            this.deleteBtnCol.ReadOnly = true;
+            this.deleteBtnCol.Text = "Xoá";
+            this.deleteBtnCol.Width = 50;
             // 
             // editCoverImgBtn
             // 
             this.editCoverImgBtn.BackColor = System.Drawing.Color.Transparent;
-            this.editCoverImgBtn.Cursor = System.Windows.Forms.Cursors.Default;
+            this.editCoverImgBtn.Cursor = System.Windows.Forms.Cursors.Hand;
             this.editCoverImgBtn.Image = ((System.Drawing.Image)(resources.GetObject("editCoverImgBtn.Image")));
-            this.editCoverImgBtn.Location = new System.Drawing.Point(617, 91);
+            this.editCoverImgBtn.Location = new System.Drawing.Point(733, 0);
             this.editCoverImgBtn.Name = "editCoverImgBtn";
-            this.editCoverImgBtn.Size = new System.Drawing.Size(27, 22);
+            this.editCoverImgBtn.Size = new System.Drawing.Size(26, 124);
             this.editCoverImgBtn.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.editCoverImgBtn.TabIndex = 5;
             this.editCoverImgBtn.TabStop = false;
+            this.editCoverImgBtn.Click += new System.EventHandler(this.editCoverImgBtn_Click);
             // 
             // showPictureBox
             // 
+            this.showPictureBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.showPictureBox.Cursor = System.Windows.Forms.Cursors.Hand;
             this.showPictureBox.Dock = System.Windows.Forms.DockStyle.Top;
             this.showPictureBox.Location = new System.Drawing.Point(0, 0);
             this.showPictureBox.Name = "showPictureBox";
             this.showPictureBox.Size = new System.Drawing.Size(762, 124);
+            this.showPictureBox.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.showPictureBox.TabIndex = 0;
             this.showPictureBox.TabStop = false;
+            // 
+            // deleteShowBtn
+            // 
+            this.deleteShowBtn.Image = ((System.Drawing.Image)(resources.GetObject("deleteShowBtn.Image")));
+            this.deleteShowBtn.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.deleteShowBtn.Location = new System.Drawing.Point(659, 6);
+            this.deleteShowBtn.Name = "deleteShowBtn";
+            this.deleteShowBtn.Size = new System.Drawing.Size(100, 25);
+            this.deleteShowBtn.TabIndex = 7;
+            this.deleteShowBtn.Text = "Huỷ show";
+            this.deleteShowBtn.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.deleteShowBtn.UseVisualStyleBackColor = true;
+            this.deleteShowBtn.Click += new System.EventHandler(this.deleteShowBtn_Click);
             // 
             // ShowsUserControl
             // 
@@ -303,13 +509,16 @@ namespace Band.ManageApp
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Name = "ShowsUserControl";
-            this.Size = new System.Drawing.Size(762, 494);
+            this.Size = new System.Drawing.Size(762, 567);
             this.panel1.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.addShowBtn)).EndInit();
             this.panel2.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.editShowInfoBtn)).EndInit();
             this.panel4.ResumeLayout(false);
+            this.panel4.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.editTicketInfoBtn)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.ticketsTbl)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.editCoverImgBtn)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.showPictureBox)).EndInit();
@@ -326,26 +535,42 @@ namespace Band.ManageApp
         private System.Windows.Forms.PictureBox showPictureBox;
         private System.Windows.Forms.PictureBox editCoverImgBtn;
         private System.Windows.Forms.Panel panel4;
-        private System.Windows.Forms.DateTimePicker dateTimePicker3;
-        private System.Windows.Forms.DateTimePicker dateTimePicker4;
+        private System.Windows.Forms.DateTimePicker saleTimeBox;
+        private System.Windows.Forms.DateTimePicker saleDateBox;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Label label7;
-        private System.Windows.Forms.TextBox textBox2;
+        private System.Windows.Forms.TextBox locationTxtBox;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.DateTimePicker dateTimePicker2;
+        private System.Windows.Forms.DateTimePicker performDatebox;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.DateTimePicker dateTimePicker1;
+        private System.Windows.Forms.DateTimePicker performTimeBox;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox nameTxtBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.DataGridView ticketsTbl;
         private System.Windows.Forms.DataGridViewComboBoxColumn TicketType;
         private System.Windows.Forms.DataGridViewTextBoxColumn TicketDetails;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label totalPrice;
+        private System.Windows.Forms.Label totalTickets;
+        private System.Windows.Forms.RichTextBox detailTicketTxtBox;
         private System.Windows.Forms.DataGridViewComboBoxColumn tiketTypeCol;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ticketDetailsCol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn priceTicketCol;
+        private System.Windows.Forms.DataGridViewTextBoxColumn quantityTicketCol;
+        private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.PictureBox editShowInfoBtn;
+        private System.Windows.Forms.Button saveShowInfoBtn;
+        private System.Windows.Forms.PictureBox editTicketInfoBtn;
+        private System.Windows.Forms.Button saveTiketInfoBtn;
+        private System.Windows.Forms.Button button2;
+        private System.Windows.Forms.Button saveBtn;
+        private System.Windows.Forms.DataGridViewButtonColumn deleteBtnCol;
+        private System.Windows.Forms.Button deleteShowBtn;
     }
 }

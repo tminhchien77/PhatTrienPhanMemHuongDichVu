@@ -16,7 +16,8 @@ namespace Band.ViewModels.Utilities
         public enum ImageType
         {
             AVATAR_MEM=1,
-            COVER_MEM=2
+            COVER_MEM=2,
+            IMG_SHOW=3
         }
     }
 }
